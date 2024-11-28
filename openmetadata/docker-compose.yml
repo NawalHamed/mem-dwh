@@ -534,5 +534,10 @@ services:
 
 networks:
   app_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.240.0/24" # Custom private network for app
   shared-network:
     external: true
