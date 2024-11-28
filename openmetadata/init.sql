@@ -1,2 +1,2 @@
-GRANT ALL PRIVILEGES ON openmetadata_db.* TO 'openmetadata_user'@'%';
+GRANT ALL PRIVILEGES ON openmetadata_db.* TO 'root'@'%';
 FLUSH PRIVILEGES;
