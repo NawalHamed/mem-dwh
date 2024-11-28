@@ -269,6 +269,7 @@ services:
         condition: service_healthy
     networks:
       - app_net
+      - shared-network
 
   openmetadata-server:
     container_name: openmetadata_server
