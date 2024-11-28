@@ -22,7 +22,7 @@ services:
     command: "--sort_buffer_size=10M"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: openmetadata_password
+      MYSQL_ROOT_PASSWORD: password
     expose:
       - 3306
     ports:
@@ -33,7 +33,7 @@ services:
       - app_net
       - shared-network
     healthcheck:
-      test: mysql --user=openmetadata_user --password=$$MYSQL_ROOT_PASSWORD --silent --execute "use openmetadata_db"
+      test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --silent --execute "use openmetadata_db"
       interval: 15s
       timeout: 10s
       retries: 10
@@ -161,8 +161,8 @@ services:
       DB_DRIVER_CLASS: ${DB_DRIVER_CLASS:-com.mysql.cj.jdbc.Driver}
       DB_SCHEME: ${DB_SCHEME:-mysql}
       DB_PARAMS: ${DB_PARAMS:-allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC}
-      DB_USER: ${DB_USER:-openmetadata_user}
-      DB_USER_PASSWORD: ${DB_USER_PASSWORD:-openmetadata_password}
+      DB_USER: ${DB_USER:-root}
+      DB_USER_PASSWORD: ${DB_USER_PASSWORD:-password}
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       OM_DATABASE: ${OM_DATABASE:-openmetadata_db}
