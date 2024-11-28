@@ -472,7 +472,6 @@ services:
         condition: service_completed_successfully
     networks:
       - app_net
-      - shared-network
     healthcheck:
       test: [ "CMD", "wget", "-q", "--spider",  "http://localhost:8586/healthcheck" ]
 
