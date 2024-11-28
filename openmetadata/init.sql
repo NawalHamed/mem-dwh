@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS openmetadata_db;
+GRANT ALL PRIVILEGES ON openmetadata_db.* TO 'root'@'%' IDENTIFIED BY 'password';
+FLUSH PRIVILEGES;
