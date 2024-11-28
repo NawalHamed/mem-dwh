@@ -283,5 +283,5 @@ volumes:
       #external: true
 networks:
   local-network:
-    shared-network:
-      external: true
+  shared-network:
+    external: true
