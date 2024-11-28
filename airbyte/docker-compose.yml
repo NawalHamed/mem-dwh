@@ -36,8 +36,8 @@ services:
       airbyte-init:
         condition: service_completed_successfully
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
   airbyte-db:
     image: airbyte/db:${VERSION}
@@ -56,8 +56,8 @@ services:
     volumes:
       - airbyte-db:/var/lib/postgresql/data
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
   airbyte-worker:
     image: airbyte/worker:${VERSION}
@@ -127,8 +127,8 @@ services:
       airbyte-bootloader:
         condition: service_completed_successfully
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
   server:
     image: airbyte/server:${VERSION}
@@ -174,8 +174,8 @@ services:
       airbyte-bootloader:
         condition: service_completed_successfully
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
   webapp:
     image: airbyte/webapp:${VERSION}
@@ -201,8 +201,8 @@ services:
       airbyte-bootloader:
         condition: service_completed_successfully
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
@@ -221,8 +221,8 @@ services:
       # - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
       - dynamicconfig:/etc/temporal/config/dynamicconfig
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
   airbyte-cron:
     image: airbyte/cron:${VERSION}
@@ -248,8 +248,8 @@ services:
       airbyte-bootloader:
         condition: service_completed_successfully
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
   airbyte-connector-builder-server:
     image: airbyte/connector-builder-server:${VERSION}
@@ -264,8 +264,8 @@ services:
       airbyte-bootloader:
         condition: service_completed_successfully
     networks:
-      #- local-network
-      - shared-network
+      - local-network
+      #- shared-network
 
 volumes:
   dynamicconfig:
@@ -277,11 +277,11 @@ volumes:
     name: ${DB_DOCKER_MOUNT}
 
 
-networks:
-  default:
-    name: shared-network
-    external: true
 #networks:
-  #local-network:
-  #shared-network:
-    #external: true
+  #default:
+    #name: shared-network
+      #external: true
+networks:
+  local-network:
+  shared-network:
+    external: true
