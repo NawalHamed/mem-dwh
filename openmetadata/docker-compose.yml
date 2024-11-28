@@ -532,6 +532,6 @@ services:
 
 
 networks:
-  
+  app_net:
   shared-network:
     external: true
