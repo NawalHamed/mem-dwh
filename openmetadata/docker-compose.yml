@@ -22,7 +22,7 @@ services:
     command: "--sort_buffer_size=10M"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: openmetadata_password
     expose:
       - 3306
     ports:
@@ -33,7 +33,7 @@ services:
       - app_net
       - shared-network
     healthcheck:
-      test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --silent --execute "use openmetadata_db"
+      test: mysql --user=openmetadata_user --password=$$MYSQL_ROOT_PASSWORD --silent --execute "use openmetadata_db"
       interval: 15s
       timeout: 10s
       retries: 10
