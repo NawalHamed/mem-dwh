@@ -277,11 +277,11 @@ volumes:
     name: ${DB_DOCKER_MOUNT}
 
 
-networks:
-  default:
-    name: shared-network
-      external: true
 #networks:
+  #default:
+    #name: shared-network
+      #external: true
+networks:
   #local-network:
-  #shared-network:
-    #external: true
+  shared-network:
+    external: true
