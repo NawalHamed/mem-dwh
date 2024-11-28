@@ -276,6 +276,7 @@ services:
     restart: always
     image: docker.getcollate.io/openmetadata/server:1.4.8
     environment:
+      LOG_LEVEL: DEBUG
       #VIRTUAL_HOST: ${DEPLOYMENT_NAME}-openmetadata.rihal.dev
       VIRTUAL_HOST: dwh-openmetadata.rihal.dev
       OPENMETADATA_CLUSTER_NAME: ${OPENMETADATA_CLUSTER_NAME:-openmetadata}
