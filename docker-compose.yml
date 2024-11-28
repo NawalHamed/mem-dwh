@@ -37,7 +37,7 @@ services:
         condition: service_completed_successfully
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
   airbyte-db:
     image: airbyte/db:${VERSION}
@@ -57,7 +57,7 @@ services:
       - airbyte-db:/var/lib/postgresql/data
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
   airbyte-worker:
     image: airbyte/worker:${VERSION}
@@ -128,7 +128,7 @@ services:
         condition: service_completed_successfully
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
   server:
     image: airbyte/server:${VERSION}
@@ -175,7 +175,7 @@ services:
         condition: service_completed_successfully
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
   webapp:
     image: airbyte/webapp:${VERSION}
@@ -202,7 +202,7 @@ services:
         condition: service_completed_successfully
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
@@ -222,7 +222,7 @@ services:
       - dynamicconfig:/etc/temporal/config/dynamicconfig
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
   airbyte-cron:
     image: airbyte/cron:${VERSION}
@@ -249,7 +249,7 @@ services:
         condition: service_completed_successfully
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
   airbyte-connector-builder-server:
     image: airbyte/connector-builder-server:${VERSION}
@@ -265,7 +265,7 @@ services:
         condition: service_completed_successfully
     networks:
       - local-network
-      - shared-network
+      #- shared-network
 
 volumes:
   dynamicconfig:
@@ -283,5 +283,5 @@ volumes:
       #external: true
 networks:
   local-network:
-  shared-network:
-    external: true
+    shared-network:
+      external: true
