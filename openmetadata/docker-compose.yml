@@ -279,6 +279,7 @@ services:
     environment:
       #VIRTUAL_HOST: ${DEPLOYMENT_NAME}-openmetadata.rihal.dev
       VIRTUAL_HOST: dwh-openmetadata.rihal.dev
+      VIRTUAL_PORT: 8585
       OPENMETADATA_CLUSTER_NAME: ${OPENMETADATA_CLUSTER_NAME:-openmetadata}
       SERVER_PORT: ${SERVER_PORT:-8585}
       SERVER_ADMIN_PORT: ${SERVER_ADMIN_PORT:-8586}
