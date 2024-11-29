@@ -17,14 +17,14 @@ volumes:
   es-data:
 services:
   mysql:
-    container_name: openmetadata_mysql
+    container_name: dwh-openmetadata_mysql
     image: docker.getcollate.io/openmetadata/db:1.4.8
     command: "--sort_buffer_size=10M"
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
-    expose:
-      - 3306
+    #expose:
+      #- 3306
     ports:
       - "3306:3306"
     volumes:
@@ -40,7 +40,7 @@ services:
       retries: 10
 
   elasticsearch:
-    container_name: openmetadata_elasticsearch
+    container_name: dwh-openmetadata_elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
     environment:
       - discovery.type=single-node
@@ -62,7 +62,7 @@ services:
 
 
   execute-migrate-all:
-    container_name: execute_migrate_all
+    container_name: dwh-execute_migrate_all
     image: docker.getcollate.io/openmetadata/server:1.4.8
     command: "./bootstrap/openmetadata-ops.sh migrate"
     environment:
@@ -270,9 +270,10 @@ services:
         condition: service_healthy
     networks:
       - app_net
+      - shared-network
 
   openmetadata-server:
-    container_name: openmetadata_server
+    container_name: dwh-openmetadata_server
     restart: always
     image: docker.getcollate.io/openmetadata/server:1.4.8
     environment:
@@ -462,9 +463,9 @@ services:
       WEB_CONF_XSS_CSP_POLICY: ${WEB_CONF_XSS_CSP_POLICY:-"default-src 'self'"}
       WEB_CONF_XSS_CSP_REPORT_ONLY_POLICY: ${WEB_CONF_XSS_CSP_REPORT_ONLY_POLICY:-""}
       
-    expose:
-      - 8585
-      - 8586
+    #expose:
+     # - 8585
+      #- 8586
     ports:
       - "8585:8585"
       - "8586:8586"
@@ -482,7 +483,7 @@ services:
       test: [ "CMD", "wget", "-q", "--spider",  "http://localhost:8586/healthcheck" ]
 
   ingestion:
-    container_name: openmetadata_ingestion
+    container_name: dwh-openmetadata_ingestion
     image: docker.getcollate.io/openmetadata/ingestion:1.4.8
     depends_on:
       elasticsearch:
@@ -518,8 +519,8 @@ services:
     command:
       - "/opt/airflow/ingestion_dependency.sh"
       
-    expose:
-      - 8080
+    #expose:
+      #- 8080
     ports:
       - "8080:8080"
     networks:
@@ -534,10 +535,5 @@ services:
 
 networks:
   app_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: "172.16.240.0/24" # Custom private network for app
   shared-network:
     external: true
