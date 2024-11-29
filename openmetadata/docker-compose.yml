@@ -527,7 +527,7 @@ services:
       - "8080:8080"
     networks:
       - app_net
-      - shared-network
+      #- shared-network
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
