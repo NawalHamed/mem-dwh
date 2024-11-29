@@ -32,7 +32,7 @@ services:
      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app_net
-      - shared-network
+      #- shared-network
     healthcheck:
       test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --silent --execute "use openmetadata_db"
       interval: 15s
@@ -270,7 +270,7 @@ services:
         condition: service_healthy
     networks:
       - app_net
-      - shared-network
+      #- shared-network
 
   openmetadata-server:
     container_name: dwh-openmetadata_server
