@@ -487,12 +487,12 @@ services:
     container_name: dwh-openmetadata_ingestion
     image: docker.getcollate.io/openmetadata/ingestion:1.4.8
     depends_on:
-      #elasticsearch:
-      #  condition: service_started
+      elasticsearch:
+        condition: service_started
       mysql:
         condition: service_healthy
-      #openmetadata-server:
-      #  condition: service_started
+      openmetadata-server:
+        condition: service_started
     environment:
       VIRTUAL_HOST: dwh-airflow.rihal.dev
       VIRTUAL_PORT: 8081
@@ -518,8 +518,7 @@ services:
     entrypoint: /bin/bash
     #command: tail -f /dev/null
     #command: /bin/bash -c "while true; do echo Hello; sleep 3600; done" 
-    command:
-      - "/opt/airflow/ingestion_dependency.sh"
+    command: ["/bin/bash", "-c", "/opt/airflow/ingestion_dependency.sh && airflow webserver"]
       
     #expose:
       #- 8080
