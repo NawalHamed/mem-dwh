@@ -487,12 +487,12 @@ services:
     container_name: dwh-openmetadata_ingestion
     image: docker.getcollate.io/openmetadata/ingestion:1.4.8
     depends_on:
-      elasticsearch:
-        condition: service_started
-      mysql:
-        condition: service_healthy
-      openmetadata-server:
-        condition: service_started
+      #elasticsearch:
+      #  condition: service_started
+      #mysql:
+      #  condition: service_healthy
+      #openmetadata-server:
+      #  condition: service_started
     environment:
       VIRTUAL_HOST: dwh-airflow.rihal.dev
       VIRTUAL_PORT: 8081
