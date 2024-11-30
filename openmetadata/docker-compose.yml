@@ -518,7 +518,7 @@ services:
     entrypoint: /bin/bash
     #command: tail -f /dev/null
     #command: /bin/bash -c "while true; do echo Hello; sleep 3600; done" 
-    command: ["/bin/bash", "-c", "/opt/airflow/ingestion_dependency.sh && airflow webserver"]
+    command: ["airflow", "webserver"]
       
     #expose:
       #- 8080
