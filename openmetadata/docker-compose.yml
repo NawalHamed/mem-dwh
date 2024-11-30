@@ -489,8 +489,8 @@ services:
     depends_on:
       #elasticsearch:
       #  condition: service_started
-      #mysql:
-      #  condition: service_healthy
+      mysql:
+        condition: service_healthy
       #openmetadata-server:
       #  condition: service_started
     environment:
