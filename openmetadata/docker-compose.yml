@@ -477,11 +477,14 @@ services:
         condition: service_healthy
       execute-migrate-all:
         condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8585/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - app_net
       - shared-network
-    healthcheck:
-      test: [ "CMD", "wget", "-q", "--spider",  "http://localhost:8586/healthcheck" ]
 
   ingestion:
     container_name: dwh-openmetadata_ingestion
@@ -520,6 +523,11 @@ services:
     #command: /bin/bash -c "while true; do echo Hello; sleep 3600; done" 
     command:
       - "/opt/airflow/ingestion_dependency.sh"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
       
     #expose:
       #- 8080
