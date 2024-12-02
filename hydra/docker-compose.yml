@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+
+  hydra-db:
+    image: postgres:13-alpine
+
+    container_name: dwh-hydra-db
+
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=hydra
+
+    networks:
+      - shared-network
+
+    volumes:
+      - hydra-db-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "hydra", "-d", "hydra"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  hydra:
+    container_name: dwh-hydra
+
+    image: ghcr.io/hydradatabase/hydra:v1.10.6  # Pin a specific version
+
+    ports:
+      - "4444:4444"  # OAuth2 public port
+      - "4445:4445"  # Admin port for Hydra API
+
+    environment:
+      - DSN=${DSN}
+      - VIRTUAL_HOST=dwh-hydra.rihal.dev
+      - VIRTUAL_PORT=4444
+
+    depends_on:
+      - dwh-hydra-db
+
+    
+    networks:
+      - shared-network
+    restart: on-failure
+
+
+networks:
+  shared-network:
+    external: true  # Assuming the predefined external network exists
+
+volumes:
+  hydra-db-data:
