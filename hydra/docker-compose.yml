@@ -16,8 +16,8 @@ services:
       - files-postgres:/etc/postgresql
       - volumes-backup:/var/lib/pgsql/backups
     #command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
-    #networks:
-      #- default      
+    networks:
+      - shared-network      
  
     #networks:
       #- default
