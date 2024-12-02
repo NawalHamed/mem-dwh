@@ -28,7 +28,7 @@ services:
   hydra:
     container_name: dwh-hydra
 
-    image: ghcr.io/hydradatabase/hydra:v1.10.6  # Pin a specific version
+    image: ghcr.io/hydradatabase/hydra:latest  # Pin a specific version
 
     ports:
       - "4444:4444"  # OAuth2 public port
