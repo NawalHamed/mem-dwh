@@ -26,9 +26,9 @@ services:
     volumes:
       - nginx_conf_data:/etc/nginx/product-conf/
       - nginx_ssl_data:/etc/nginx/ssl/
-    environment:
-      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
-      - VIRTUAL_PORT=81
+    #environment:
+      #- VIRTUAL_HOST=dwh-dbeaver.rihal.dev
+      #- VIRTUAL_PORT=81
     depends_on:
       - cloudbeaver
 
@@ -41,6 +41,8 @@ services:
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
     environment:
+      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
+      - VIRTUAL_PORT=81
       - CLOUDBEAVER_DB_DRIVER=${CLOUDBEAVER_DB_DRIVER}
       - CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
       - CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
@@ -57,7 +59,7 @@ services:
       - postgres
     networks:
       - cloudbeaver-private-net
-      #- shared-network
+      - shared-network
 
   postgres:
     restart: unless-stopped
