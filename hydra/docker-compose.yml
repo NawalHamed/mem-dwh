@@ -1,56 +1,32 @@
-version: '3.8'
-
 services:
-
-  hydra-db:
-    image: postgres:latest
-
-    container_name: dwh-hydra-db
-
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=hydra
-
-    networks:
-      - shared-network
-
-    volumes:
-      - hydra-db-data:/var/lib/postgresql/data
-
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "hydra", "-d", "hydra"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 5s
-
   hydra:
-    container_name: dwh-hydra
-
-    image: ghcr.io/hydradatabase/hydra:latest  # Pin a specific version
-
+    container_name: hydra
+    image: ghcr.io/hydradatabase/hydra:latest
     ports:
-      - "4444:4444"  # OAuth2 public port
-      - "4445:4445"  # Admin port for Hydra API
-
+      - ${POSTGRES_PORT}:5433
     environment:
-      - DSN=${DSN}
-      - VIRTUAL_HOST=dwh-hydra.rihal.dev
-      - VIRTUAL_PORT=4444
-
-    depends_on:
-      - hydra-db
-
-    
-    networks:
-      - shared-network
-    restart: on-failure
-
-
-networks:
-  shared-network:
-    external: true  # Assuming the predefined external network exists
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      VIRTUAL_HOST: dwh-hydra.rihal.dev
+      VIRTUAL_PORT: 5433
+    volumes:
+      - volumes-db:/var/lib/postgresql/data
+      - files-postgres:/etc/postgresql
+      - volumes-backup:/var/lib/pgsql/backups
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    #networks:
+      #- default      
+ 
+    #networks:
+      #- default
 
 volumes:
-  hydra-db-data:
+  volumes-db:
+  files-postgres:
+  volumes-backup:
+ 
+networks:
+  shared-network:
+    external: true
+ 
+
