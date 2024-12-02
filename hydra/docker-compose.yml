@@ -15,7 +15,7 @@ services:
       - volumes-db:/var/lib/postgresql/data
       - files-postgres:/etc/postgresql
       - volumes-backup:/var/lib/pgsql/backups
-    #command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     networks:
       - hydra-network      
  
