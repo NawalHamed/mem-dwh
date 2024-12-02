@@ -40,7 +40,7 @@ services:
       - VIRTUAL_PORT=4444
 
     depends_on:
-      - dwh-hydra-db
+      - hydra-db
 
     
     networks:
