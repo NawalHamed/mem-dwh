@@ -31,7 +31,7 @@ services:
      - ./docker-volume/db-data:/var/lib/mysql
      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - app_net
+      - openmetadata-network
       #- shared-network
     healthcheck:
       test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD --silent --execute "use openmetadata_db"
@@ -47,7 +47,7 @@ services:
       - ES_JAVA_OPTS=-Xms1024m -Xmx1024m
       - xpack.security.enabled=false
     networks:
-      - app_net
+      - openmetadata-network
       - shared-network
     ports:
       - "9200:9200"
@@ -269,7 +269,7 @@ services:
       mysql:
         condition: service_healthy
     networks:
-      - app_net
+      - openmetadata-network
       #- shared-network
 
   openmetadata-server:
@@ -483,7 +483,7 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - app_net
+      - openmetadata-network
       - shared-network
 
   ingestion:
@@ -534,7 +534,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - app_net
+      - openmetadata-network
       - shared-network
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
@@ -543,6 +543,6 @@ services:
 
 
 networks:
-  app_net:
+  openmetadata-network:
   shared-network:
     external: true
