@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   hydra-db:
-    image: postgres:alpine
+    image: postgres:latest
 
     container_name: dwh-hydra-db
 
