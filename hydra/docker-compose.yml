@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   hydra-db:
-    image: postgres:13-alpine
+    image: postgres:13
 
     container_name: dwh-hydra-db
 
@@ -40,7 +40,7 @@ services:
       - VIRTUAL_PORT=4444
 
     depends_on:
-      - hydra-db
+      - dwh-hydra-db
 
     
     networks:
