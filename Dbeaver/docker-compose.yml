@@ -22,9 +22,13 @@ services:
       - .env  
     networks:
       - cloudbeaver-private-net
+      - shared-network
     volumes:
       - nginx_conf_data:/etc/nginx/product-conf/
       - nginx_ssl_data:/etc/nginx/ssl/
+    environment:
+      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
+      - VIRTUAL_PORT=80
     depends_on:
       - cloudbeaver
 
