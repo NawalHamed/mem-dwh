@@ -6,7 +6,7 @@ services:
       - ${POSTGRES_PORT}:5432
     environment:
       VIRTUAL_HOST: dwh-hydra.rihal.dev
-      VIRTUAL_PORT: 5433
+      VIRTUAL_PORT: 5434
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
