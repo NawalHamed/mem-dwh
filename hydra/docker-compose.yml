@@ -17,7 +17,7 @@ services:
       - volumes-backup:/var/lib/pgsql/backups
     #command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     networks:
-      - shared-network      
+      - hydra-network      
  
     #networks:
       #- default
@@ -28,6 +28,7 @@ volumes:
   volumes-backup:
  
 networks:
+  hydra-network:
   shared-network:
     external: true
 
