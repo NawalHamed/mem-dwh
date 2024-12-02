@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     image: $IMAGE_SOURCE/cloudbeaver-nginx:${CLOUDBEAVER_VERSION_TAG}
     ports:
-      - 80:80
+      - 81:80
       - 443:443
     env_file:
       - .env  
@@ -28,7 +28,7 @@ services:
       - nginx_ssl_data:/etc/nginx/ssl/
     environment:
       - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
-      - VIRTUAL_PORT=80
+      - VIRTUAL_PORT=81
     depends_on:
       - cloudbeaver
 
