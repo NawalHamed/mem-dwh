@@ -1,5 +1,5 @@
 version: "3"
-
+#https://github.com/dbeaver/cloudbeaver-deploy/blob/main/docker-compose.yml
 services:
   cloudbeaver:
     image: dbeaver/cloudbeaver-ee:latest
