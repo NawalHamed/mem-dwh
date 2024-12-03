@@ -5,11 +5,11 @@ services:
     image: dbeaver/cloudbeaver-ee:latest
     container_name: cloudbeaver
     environment:
-      - VIRTUAL_HOST= dwh-dbeaver.rihal.dev
-      - VIRTUAL_PORT= 8978
-      - CLOUDBEAVER_DB_URL=jdbc:postgresql://postgres:5436/cloudbeaver
-      - CLOUDBEAVER_DB_USER=cloudbeaver_user
-      - CLOUDBEAVER_DB_PASSWORD=cloudbeaver_password
+      - VIRTUAL_HOST: dwh-dbeaver.rihal.dev
+      - VIRTUAL_PORT: 8978
+      - CLOUDBEAVER_DB_URL: jdbc:postgresql://postgres:5436/cloudbeaver
+      - CLOUDBEAVER_DB_USER: cloudbeaver_user
+      - CLOUDBEAVER_DB_PASSWORD: cloudbeaver_password
     ports:
       - "8978:8978"  # Expose CloudBeaver web interface on port 8978
     networks:
@@ -19,9 +19,9 @@ services:
     image: postgres:13
     container_name: postgres
     environment:
-      - POSTGRES_DB=cloudbeaver
-      - POSTGRES_USER=cloudbeaver_user
-      - POSTGRES_PASSWORD=cloudbeaver_password
+      - POSTGRES_DB: cloudbeaver
+      - POSTGRES_USER: cloudbeaver_user
+      - POSTGRES_PASSWORD: cloudbeaver_password
     ports:
       - "5436:5432"  # Expose PostgreSQL on port 5432
     networks:
