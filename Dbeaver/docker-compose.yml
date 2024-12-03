@@ -18,7 +18,7 @@ services:
     image: $IMAGE_SOURCE/cloudbeaver-nginx:${CLOUDBEAVER_VERSION_TAG}
     ports:
       - 81:80
-      - 443:443
+      #- 443:443
     env_file:
       - .env  
     networks:
@@ -53,8 +53,8 @@ services:
       - CLOUDBEAVER_QM_DB_USER=${CLOUDBEAVER_QM_DB_USER}
       - CLOUDBEAVER_QM_DB_PASSWORD=${CLOUDBEAVER_QM_DB_PASSWORD}
       - CLOUDBEAVER_QM_DB_SCHEMA=${CLOUDBEAVER_QM_DB_SCHEMA}
-    #expose:
-      #- ${CLOUDBEAVER_SERVICE_PORT:-8978}
+    expose:
+      - ${CLOUDBEAVER_SERVICE_PORT:-8978}
     depends_on:
       - postgres
     networks:
