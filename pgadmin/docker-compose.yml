@@ -14,6 +14,7 @@ services:
 
     networks:
       - pgadmin-network
+      - shared-network
 
     ports:
       - "5437:5432"
