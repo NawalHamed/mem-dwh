@@ -24,6 +24,8 @@ services:
     networks:
       - cloudbeaver-private-net
       - shared-network
+    environment:
+      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
     volumes:
       - nginx_conf_data:/etc/nginx/product-conf/
       - nginx_ssl_data:/etc/nginx/ssl/
@@ -39,7 +41,7 @@ services:
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
     environment:
-      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
+      
       #- VIRTUAL_PORT=81
       - CLOUDBEAVER_DB_DRIVER=${CLOUDBEAVER_DB_DRIVER}
       - CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
