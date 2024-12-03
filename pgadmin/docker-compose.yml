@@ -1,41 +1,40 @@
-version: "3.8"
+version: '3.8'
+#https://medium.com/towards-data-engineering/running-a-postgresql-and-pgadmin4-instance-using-docker-compose-c6dd6e6e03bb
+#https://github.com/matschik/docker-compose-postgres-pgadmin/tree/main
 services:
-  db:
-    image: postgres
-    container_name: dwh-postgres-db
-    restart: always
-    ports:
-      - "5438:5432"
+  postgres:
+    image: postgres:16
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
     volumes:
-      - local_pgdata:/var/lib/postgresql/data
+      - "postgres-data:/var/lib/postgresql/data"
+
     networks:
       - pgadmin-network
-  
+      
+
+    ports:
+      - "5437:5432"
+
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin4_container
     restart: always
-    ports:
-      - "8888:80"
     environment:
       VIRTUAL_HOST: dwh-pgadmin.rihal.dev
-      VIRTUAL_PORT: 8888
       PGADMIN_DEFAULT_EMAIL: nalmawali97@gmail.com
       PGADMIN_DEFAULT_PASSWORD: root
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
     networks:
       - pgadmin-network
       - shared-network
-    
+      
+    ports:
+      - "5050:80"
 
 volumes:
-  local_pgdata:
-  pgadmin-data:
-
+  postgres-data:
 
 networks:
   pgadmin-network:
