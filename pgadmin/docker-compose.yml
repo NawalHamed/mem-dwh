@@ -29,6 +29,9 @@ services:
     ports:
       - "5050:80"
 
+volumes:
+  postgres-data:
+
 networks:
   shared-network:
     external: true
