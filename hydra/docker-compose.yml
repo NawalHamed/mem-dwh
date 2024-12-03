@@ -6,8 +6,7 @@ services:
       - 5435:5432
       #${POSTGRES_PORT}
     environment:
-      VIRTUAL_HOST: dwh-hydra.rihal.dev
-      VIRTUAL_PORT: 5435
+
       POSTGRES_USER: postgres #${POSTGRES_USER}
       POSTGRES_PASSWORD: hydra #${POSTGRES_PASSWORD}
       POSTGRES_DB: hydra #${POSTGRES_DB}
@@ -17,8 +16,6 @@ services:
       - files-postgres:/etc/postgresql
       - volumes-backup:/var/lib/pgsql/backups
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
-    networks:
-      - hydra-network      
  
 
 volumes:
@@ -27,7 +24,7 @@ volumes:
   volumes-backup:
  
 networks:
-  hydra-network:
+  #hydra-network:
   shared-network:
     external: true
 
