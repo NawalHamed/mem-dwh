@@ -1,5 +1,6 @@
 version: '3.8'
 #https://medium.com/towards-data-engineering/running-a-postgresql-and-pgadmin4-instance-using-docker-compose-c6dd6e6e03bb
+#https://github.com/matschik/docker-compose-postgres-pgadmin/tree/main
 services:
   postgres:
     image: postgres:16
