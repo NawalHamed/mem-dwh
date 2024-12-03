@@ -58,7 +58,7 @@ services:
       - postgres
     networks:
       - cloudbeaver-private-net
-      #- shared-network
+    
 
   postgres:
     restart: unless-stopped
@@ -71,10 +71,10 @@ services:
       - POSTGRES_DB=cloudbeaver
       - POSTGRES_USER=${CLOUDBEAVER_DB_USER}
       - POSTGRES_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
-    #expose:
-      #- 5432
+    ports:
+    - 6300:5432
     networks:
       - cloudbeaver-private-net
-      #- shared-network
+      
 
 
