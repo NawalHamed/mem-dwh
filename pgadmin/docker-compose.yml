@@ -12,7 +12,7 @@ services:
       - "postgres-data:/var/lib/postgresql/data"
 
     networks:
-      - shared-network
+      - pgadmin-network
 
     ports:
       - "5437:5432"
@@ -33,5 +33,6 @@ volumes:
   postgres-data:
 
 networks:
+  pgadmin-network:
   shared-network:
     external: true
