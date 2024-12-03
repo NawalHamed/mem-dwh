@@ -72,7 +72,7 @@ services:
       - POSTGRES_USER=${CLOUDBEAVER_DB_USER}
       - POSTGRES_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
     ports:
-    - 6300:5432
+      - 6300:5432
     networks:
       - cloudbeaver-private-net
       
