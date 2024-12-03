@@ -59,7 +59,7 @@ services:
       - postgres
     networks:
       - cloudbeaver-private-net
-      - shared-network
+      #- shared-network
 
   postgres:
     restart: unless-stopped
