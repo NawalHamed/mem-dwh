@@ -23,7 +23,7 @@ services:
       - cloudbeaver:/opt/cloudbeaver/workspace
     environment:
       - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
-      - VIRTUAL_PORT=8978
+      - VIRTUAL_PORT=81
       - CLOUDBEAVER_DB_DRIVER=${CLOUDBEAVER_DB_DRIVER}
       - CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
       - CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
