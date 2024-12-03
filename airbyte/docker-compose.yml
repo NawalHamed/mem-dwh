@@ -267,20 +267,30 @@ services:
       - airbyte-network
       #- shared-network
 
+  hydra:
+    container_name: dwh-hydra
+    image: ghcr.io/hydradatabase/hydra:latest
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - hydra-db:/var/lib/postgresql/data
+    networks:
+      - shared-network
+
 volumes:
-  dynamicconfig:
   airbyte-workspace:
     name: ${WORKSPACE_DOCKER_MOUNT}
   airbyte-data:
     name: ${DATA_DOCKER_MOUNT}
   airbyte-db:
     name: ${DB_DOCKER_MOUNT}
+  hydra-db:
 
 
-#networks:
-  #default:
-    #name: shared-network
-      #external: true
 networks:
   airbyte-network:
   shared-network:
