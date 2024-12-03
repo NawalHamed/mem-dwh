@@ -7,7 +7,7 @@ services:
     environment:
       - VIRTUAL_HOST= dwh-dbeaver.rihal.dev
       - VIRTUAL_PORT= 8978
-      - CLOUDBEAVER_DB_URL=jdbc:postgresql://postgres:5432/cloudbeaver
+      - CLOUDBEAVER_DB_URL=jdbc:postgresql://postgres:5436/cloudbeaver
       - CLOUDBEAVER_DB_USER=cloudbeaver_user
       - CLOUDBEAVER_DB_PASSWORD=cloudbeaver_password
     ports:
