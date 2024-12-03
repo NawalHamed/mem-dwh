@@ -13,7 +13,7 @@ services:
       - "postgres-data:/var/lib/postgresql/data"
 
     networks:
-      - pgadmin-network
+      #- pgadmin-network
       - shared-network
 
     ports:
@@ -27,7 +27,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: nalmawali97@gmail.com
       PGADMIN_DEFAULT_PASSWORD: root
     networks:
-      - pgadmin-network
+      #- pgadmin-network
       - shared-network
       
     ports:
@@ -37,6 +37,6 @@ volumes:
   postgres-data:
 
 networks:
-  pgadmin-network:
+  #pgadmin-network:
   shared-network:
     external: true
