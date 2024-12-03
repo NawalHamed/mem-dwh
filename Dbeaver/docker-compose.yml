@@ -12,26 +12,7 @@ networks:
     external: true
 
 services:
-  nginx:
-    restart: unless-stopped
-    image: $IMAGE_SOURCE/cloudbeaver-nginx:${CLOUDBEAVER_VERSION_TAG}
-    #ports:
-      #- 81:80
-      #- 443:443
-    env_file:
-      - .env
-    networks:
-      - cloudbeaver-private-net
-      - shared-network
-    volumes:
-      - nginx_conf_data:/etc/nginx/product-conf/
-      - nginx_ssl_data:/etc/nginx/ssl/
-    environment:
-      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
-      - VIRTUAL_PORT=81
-    depends_on:
-      - cloudbeaver
-
+  
   cloudbeaver:
     restart: unless-stopped
     hostname: cloudbeaver
@@ -41,7 +22,8 @@ services:
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
     environment:
-     
+      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
+      - VIRTUAL_PORT=8978
       - CLOUDBEAVER_DB_DRIVER=${CLOUDBEAVER_DB_DRIVER}
       - CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
       - CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
