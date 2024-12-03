@@ -15,9 +15,9 @@ services:
   nginx:
     restart: unless-stopped
     image: $IMAGE_SOURCE/cloudbeaver-nginx:${CLOUDBEAVER_VERSION_TAG}
-    ports:
-      - 81:80
-      - 443:443
+    #ports:
+      #- 81:80
+      #- 443:443
     env_file:
       - .env  
     networks:
