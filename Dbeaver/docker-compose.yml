@@ -1,82 +1,31 @@
 version: "3"
 
-volumes:
-  cloudbeaver: {}
-  postgres_data: {}
-  nginx_ssl_data: {}
-  nginx_conf_data: {}
-
-networks:
-  cloudbeaver-private-net:
-  shared-network:
-    external: true
-
 services:
-
-  nginx:
-    restart: unless-stopped
-    image: $IMAGE_SOURCE/cloudbeaver-nginx:${CLOUDBEAVER_VERSION_TAG}
-    ports:
-      - 81:80
-      #- 443:443
-    env_file:
-      - .env  
-    networks:
-      - cloudbeaver-private-net
-      - shared-network
-    environment:
-      - VIRTUAL_HOST=dwh-dbeaver.rihal.dev
-    volumes:
-      - nginx_conf_data:/etc/nginx/product-conf/
-      - nginx_ssl_data:/etc/nginx/ssl/
-    depends_on:
-      - cloudbeaver
-  
   cloudbeaver:
-    restart: unless-stopped
-    hostname: cloudbeaver
-    image: $IMAGE_SOURCE/cloudbeaver-ee:${CLOUDBEAVER_VERSION_TAG}
-    deploy:
-      replicas: ${REPLICA_COUNT_EE:-1}
-    volumes:
-      - cloudbeaver:/opt/cloudbeaver/workspace
+    image: dbeaver/cloudbeaver-ee:latest
+    container_name: cloudbeaver
     environment:
-      
-      #- VIRTUAL_PORT=81
-      - CLOUDBEAVER_DB_DRIVER=${CLOUDBEAVER_DB_DRIVER}
-      - CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
-      - CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
-      - CLOUDBEAVER_DB_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
-      - CLOUDBEAVER_DB_SCHEMA=${CLOUDBEAVER_DB_SCHEMA}
-      - CLOUDBEAVER_QM_DB_DRIVER=${CLOUDBEAVER_QM_DB_DRIVER}
-      - CLOUDBEAVER_QM_DB_URL=${CLOUDBEAVER_QM_DB_URL}
-      - CLOUDBEAVER_QM_DB_USER=${CLOUDBEAVER_QM_DB_USER}
-      - CLOUDBEAVER_QM_DB_PASSWORD=${CLOUDBEAVER_QM_DB_PASSWORD}
-      - CLOUDBEAVER_QM_DB_SCHEMA=${CLOUDBEAVER_QM_DB_SCHEMA}
-    expose:
-      - ${CLOUDBEAVER_SERVICE_PORT:-8978}
-    depends_on:
-      - postgres
+      - VIRTUAL_HOST= dwh-dbeaver.rihal.dev
+      - CLOUDBEAVER_DB_URL=jdbc:postgresql://postgres:5432/cloudbeaver
+      - CLOUDBEAVER_DB_USER=cloudbeaver_user
+      - CLOUDBEAVER_DB_PASSWORD=cloudbeaver_password
+    ports:
+      - "8978:8978"  # Expose CloudBeaver web interface on port 8978
     networks:
-      - cloudbeaver-private-net
       - shared-network
-    
 
   postgres:
-    restart: unless-stopped
-    hostname: postgres
-    image: ${IMAGE_SOURCE:-dbeaver}/cloudbeaver-postgres:16
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./cloudbeaver-db-init.sql:/docker-entrypoint-initdb.d/cb-init.sql
+    image: postgres:13
+    container_name: postgres
     environment:
       - POSTGRES_DB=cloudbeaver
-      - POSTGRES_USER=${CLOUDBEAVER_DB_USER}
-      - POSTGRES_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
+      - POSTGRES_USER=cloudbeaver_user
+      - POSTGRES_PASSWORD=cloudbeaver_password
     ports:
-      - 6300:5432
+      - "5433:5432"  # Expose PostgreSQL on port 5432
     networks:
-      - cloudbeaver-private-net
-      
+      - shared-network
 
-
+networks:
+  shared-network:
+    external: true
