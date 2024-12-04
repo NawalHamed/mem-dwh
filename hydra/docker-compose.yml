@@ -4,7 +4,6 @@ services:
     image: ghcr.io/hydradatabase/hydra:latest
     ports:
       - 5435:5432
-      #${POSTGRES_PORT}
     environment:
 
       POSTGRES_USER: postgres #${POSTGRES_USER}
@@ -16,6 +15,11 @@ services:
       - files-postgres:/etc/postgresql
       - volumes-backup:/var/lib/pgsql/backups
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+
+    networks:
+      - shared-network
+  
+
  
 
 volumes:
