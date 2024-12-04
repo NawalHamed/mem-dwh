@@ -5,10 +5,14 @@ services:
     ports:
       - "5435:5432"
     environment:
-      VIRTUAL_HOST: dwh-hydra.rihal.dev
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: hydra123456
       POSTGRES_DB: hydra
     volumes:
       - ./volumes/db:/var/lib/postgresql/data
-   
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
+    external: true
