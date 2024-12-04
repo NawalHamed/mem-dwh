@@ -10,3 +10,12 @@ services:
       POSTGRES_DB: hydra
     volumes:
       - ./volumes/db:/var/lib/postgresql/data
+
+    networks:
+      - shared-network
+
+
+networks:
+shared-network:
+  external: true
+
