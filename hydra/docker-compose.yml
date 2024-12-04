@@ -16,6 +16,8 @@ services:
 
 
 networks:
-shared-network:
-  external: true
+defualt:
+    name: shared-network
+    external: true
+ 
 
