@@ -2,36 +2,11 @@ services:
   hydra:
     container_name: dwh-hydra
     image: ghcr.io/hydradatabase/hydra:latest
-   
     ports:
-      - 5435:5432
+      - "5435:5432"
     environment:
-   
-      POSTGRES_USER: postgres #${POSTGRES_USER}
-      POSTGRES_PASSWORD: 123456 #${POSTGRES_PASSWORD}
-      POSTGRES_DB: hydra #${POSTGRES_DB}
-      
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: hydra123456
+      POSTGRES_DB: hydra
     volumes:
-      - volumes-db:/var/lib/postgresql/data
-      - files-postgres:/etc/postgresql
-      - volumes-backup:/var/lib/pgsql/backups
-    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
-
-    networks:
-      - shared-network
-  
-
- 
-
-volumes:
-  volumes-db:
-  files-postgres:
-  volumes-backup:
- 
-networks:
-  #hydra-network:
-  shared-network:
-    external: true
-
- 
-
+      - ./volumes/db:/var/lib/postgresql/data
