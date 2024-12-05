@@ -21,7 +21,7 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      VIRTUAL_HOST:dwh-pgAdmin.rihal.dev
+      VIRTUAL_HOST: dwh-pgAdmin.rihal.dev
       PGADMIN_DEFAULT_EMAIL: nalmawali97@gmail.com
       PGADMIN_DEFAULT_PASSWORD: root
     networks:
