@@ -8,14 +8,10 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-
     volumes:
       - "postgres-data:/var/lib/postgresql/data"
-
     networks:
       - pgadmin-network
-      
-
     ports:
       - "5437:5432"
 
@@ -23,11 +19,7 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-<<<<<<< HEAD
-      VIRTUAL_HOST: dwh-pgAdmin.rihal.dev
-=======
       VIRTUAL_HOST: dwh-pgadmin.rihal.dev
->>>>>>> 3b7107634e418d934650589f4a2f0d7a5d0fabb5
       PGADMIN_DEFAULT_EMAIL: nalmawali97@gmail.com
       PGADMIN_DEFAULT_PASSWORD: root
     networks:
