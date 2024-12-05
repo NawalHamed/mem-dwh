@@ -3,11 +3,11 @@ services:
     container_name: dwh-hydra
     image: ghcr.io/hydradatabase/hydra:latest
     ports:
-      - "5435:5432"
+      - ${POSTGRES_PORT}:5432
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: hydra123456
-      POSTGRES_DB: hydra
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ./volumes/db:/var/lib/postgresql/data
       - ./files/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
