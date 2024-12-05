@@ -5,18 +5,12 @@ services:
   cloudbeaver:
     restart: always
     hostname: cloudbeaver
-    image: dbeaver/cloudbeaver:latest  # Official free version image
+    image: dbeaver/cloudbeaver:latest  
     container_name: dwh-cloudbeaver
-    #deploy:
-      #replicas: 1
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
     environment:
       - VIRTUAL_HOST=dwh-cloudbeaver.rihal.dev
-      #- CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
-      #- CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
-      #- CLOUDBEAVER_DB_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
-      #- CLOUDBEAVER_DB_SCHEMA=${CLOUDBEAVER_DB_SCHEMA}
     expose:
       - "8978"
     ports:
@@ -28,9 +22,9 @@ services:
       - shared-network
 
   postgres:
-    restart: unless-stopped
+    restart: always
     hostname: postgres
-    image: postgres:13  # Official PostgreSQL image
+    image: postgres:13  
     container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -47,10 +41,7 @@ services:
 volumes:
   cloudbeaver:
   postgres_data:
-#networks:
-  #default:
-    #name: ${APP_NETWORK}
-    #external: true
+
 networks:
   cloudbeaver-network:
   shared-network:
