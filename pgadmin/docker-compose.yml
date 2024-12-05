@@ -20,7 +20,7 @@ services:
     restart: always
     environment:
       VIRTUAL_HOST: dwh-pgadmin.rihal.dev
-      VIRTUAL_PORT: 5050
+      #VIRTUAL_PORT: 5050
       PGADMIN_DEFAULT_EMAIL: nalmawali97@gmail.com
       PGADMIN_DEFAULT_PASSWORD: root
     networks:
