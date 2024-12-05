@@ -1,5 +1,4 @@
 version: "3"
-#https://github.com/dbeaver/cloudbeaver-deploy/blob/main/docker-compose.yml
 services:
   cloudbeaver:
     image: dbeaver/cloudbeaver-ee:latest
@@ -7,13 +6,18 @@ services:
     environment:
       - VIRTUAL_HOST: dwh-dbeaver.rihal.dev
       - VIRTUAL_PORT: 8978
-      - CLOUDBEAVER_DB_URL: jdbc:postgresql://postgres:5436/cloudbeaver
+      - CLOUDBEAVER_DB_URL: jdbc:postgresql://postgres:5432/cloudbeaver
       - CLOUDBEAVER_DB_USER: cloudbeaver_user
       - CLOUDBEAVER_DB_PASSWORD: cloudbeaver_password
     ports:
-      - "8978:8978"  # Expose CloudBeaver web interface on port 8978
+      - "8978:8978"
     networks:
       - shared-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - cloudbeaver_data:/opt/cloudbeaver
 
   postgres:
     image: postgres:13
@@ -23,10 +27,25 @@ services:
       - POSTGRES_USER: cloudbeaver_user
       - POSTGRES_PASSWORD: cloudbeaver_password
     ports:
-      - "5436:5432"  # Expose PostgreSQL on port 5432
+      - "5436:5432"
     networks:
       - shared-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "cloudbeaver_user", "-d", "cloudbeaver"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
+volumes:
+  cloudbeaver_data:
+  postgres_data:
+
+    
 networks:
   shared-network:
     external: true
+
+
