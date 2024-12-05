@@ -24,9 +24,9 @@ services:
     image: postgres:13
     container_name: postgres
     environment:
-      - POSTGRES_DB: cloudbeaver
-      - POSTGRES_USER: cloudbeaver_user
-      - POSTGRES_PASSWORD: cloudbeaver_password
+      POSTGRES_DB: cloudbeaver
+      POSTGRES_USER: cloudbeaver_user
+      POSTGRES_PASSWORD: cloudbeaver_password
     ports:
       - "5436:5432"
     networks:
