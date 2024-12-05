@@ -1,47 +1,47 @@
 version: "3"
 services:
   cloudbeaver:
-    image: dbeaver/cloudbeaver-ee:latest
+    restart: unless-stopped
+    hostname: cloudbeaver
+    image: $IMAGE_SOURCE/cloudbeaver-ee:${CLOUDBEAVER_VERSION_TAG}
     container_name: dwh-cloudbeaver
-    environment:
-      VIRTUAL_HOST: dwh-dbeaver.rihal.dev
-      VIRTUAL_PORT: 8978
-      CLOUDBEAVER_DB_URL: jdbc:postgresql://postgres:5432/cloudbeaver
-      CLOUDBEAVER_DB_USER: cloudbeaver_user
-      CLOUDBEAVER_DB_PASSWORD: cloudbeaver_password
-    ports:
-      - "8978:8978"
-    networks:
-      - shared-network
-      - cloudbeaver-network
-    depends_on:
-      postgres:
-        condition: service_healthy
+    deploy:
+      replicas: 1  
     volumes:
-      - cloudbeaver_data:/opt/cloudbeaver
+      - cloudbeaver:/opt/cloudbeaver/workspace
+    environment:
+      - VIRTUAL_HOST=dwh-cloudbeaver.rihal.dev
+      - CLOUDBEAVER_DB_URL=jdbc:postgresql://postgres:5432/cloudbeaver
+      - CLOUDBEAVER_DB_USER=cloudbeaver_user
+      - CLOUDBEAVER_DB_PASSWORD=cloudbeaver_password
+      - CLOUDBEAVER_DB_SCHEMA=public
+    expose:
+      - "8978"  # Expose the CloudBeaver port
+    depends_on:
+      - postgres
+    networks:
+      - cloudbeaver-network
+      - shared-network
 
   postgres:
-    image: postgres:13
+    restart: unless-stopped
+    hostname: postgres
+    image: dbeaver/cloudbeaver-postgres:16  # Change if using a different image
     container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist PostgreSQL data
+      - ./cloudbeaver-db-init.sql:/docker-entrypoint-initdb.d/cb-init.sql  # Initialize database with SQL file
     environment:
-      POSTGRES_DB: cloudbeaver
-      POSTGRES_USER: cloudbeaver_user
-      POSTGRES_PASSWORD: cloudbeaver_password
-    ports:
-      - "5436:5432"
+      - POSTGRES_DB=cloudbeaver
+      - POSTGRES_USER=cloudbeaver_user
+      - POSTGRES_PASSWORD=cloudbeaver_password
+    expose:
+      - "5432"  # Expose PostgreSQL port
     networks:
       - cloudbeaver-network
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "cloudbeaver_user", "-d", "cloudbeaver"]
-      interval: 30s
-      retries: 3
-      start_period: 10s
-      timeout: 10s
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  cloudbeaver_data:
+  cloudbeaver:
   postgres_data:
 
 networks:
