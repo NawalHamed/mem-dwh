@@ -12,6 +12,8 @@ services:
       - "postgres-data:/var/lib/postgresql/data"
     networks:
       - pgadmin-network
+    expose:
+      - 5432
     ports:
       - "5437:5432"
 
@@ -26,7 +28,8 @@ services:
     networks:
       - pgadmin-network
       - shared-network
-      
+    expose:
+      - 5050
     ports:
       - "5050:80"
 
