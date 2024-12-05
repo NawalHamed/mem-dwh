@@ -11,7 +11,6 @@ services:
       - cloudbeaver:/opt/cloudbeaver/workspace
     environment:
       - VIRTUAL_HOST=dwh-cloudbeaver.rihal.dev
-      - CLOUDBEAVER_DB_DRIVER=${CLOUDBEAVER_DB_DRIVER}
       - CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
       - CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
       - CLOUDBEAVER_DB_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
