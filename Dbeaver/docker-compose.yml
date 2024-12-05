@@ -1,32 +1,50 @@
 version: "3"
-#https://github.com/dbeaver/cloudbeaver-deploy/blob/main/docker-compose.yml
 services:
   cloudbeaver:
-    image: dbeaver/cloudbeaver-ee:latest
-    container_name: cloudbeaver
+    restart: unless-stopped
+    hostname: cloudbeaver
+    image: dbeaver/cloudbeaver:latest  # Official free version image
+    container_name: dwh-cloudbeaver
+    deploy:
+      replicas: 1
+    volumes:
+      - cloudbeaver:/opt/cloudbeaver/workspace
     environment:
-      - VIRTUAL_HOST: dwh-dbeaver.rihal.dev
-      - VIRTUAL_PORT: 8978
-      - CLOUDBEAVER_DB_URL: jdbc:postgresql://postgres:5436/cloudbeaver
-      - CLOUDBEAVER_DB_USER: cloudbeaver_user
-      - CLOUDBEAVER_DB_PASSWORD: cloudbeaver_password
-    ports:
-      - "8978:8978"  # Expose CloudBeaver web interface on port 8978
+      - VIRTUAL_HOST=dwh-cloudbeaver.rihal.dev
+      - CLOUDBEAVER_DB_URL=${CLOUDBEAVER_DB_URL}
+      - CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
+      - CLOUDBEAVER_DB_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
+      - CLOUDBEAVER_DB_SCHEMA=${CLOUDBEAVER_DB_SCHEMA}
+    expose:
+      - "8978"
+    depends_on:
+      - postgres
     networks:
+      - cloudbeaver-network
       - shared-network
 
   postgres:
-    image: postgres:13
+    restart: unless-stopped
+    hostname: postgres
+    image: postgres:13  # Official PostgreSQL image
     container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./cloudbeaver-db-init.sql:/docker-entrypoint-initdb.d/cb-init.sql
     environment:
-      - POSTGRES_DB: cloudbeaver
-      - POSTGRES_USER: cloudbeaver_user
-      - POSTGRES_PASSWORD: cloudbeaver_password
-    ports:
-      - "5436:5432"  # Expose PostgreSQL on port 5432
+      - POSTGRES_DB=cloudbeaver
+      - POSTGRES_USER=${CLOUDBEAVER_DB_USER}
+      - POSTGRES_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
+    expose:
+      - "5432"
     networks:
-      - shared-network
+      - cloudbeaver-network
+
+volumes:
+  cloudbeaver:
+  postgres_data:
 
 networks:
+  cloudbeaver-network:
   shared-network:
     external: true
