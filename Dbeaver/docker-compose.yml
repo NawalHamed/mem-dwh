@@ -3,7 +3,7 @@ services:
   cloudbeaver:
     restart: unless-stopped
     hostname: cloudbeaver
-    image: cloudbeaver/cloudbeaver:latest  # Official free version image
+    image: dbeaver/cloudbeaver:latest  # Official free version image
     container_name: dwh-cloudbeaver
     deploy:
       replicas: 1
@@ -16,11 +16,6 @@ services:
       - CLOUDBEAVER_DB_USER=${CLOUDBEAVER_DB_USER}
       - CLOUDBEAVER_DB_PASSWORD=${CLOUDBEAVER_DB_PASSWORD}
       - CLOUDBEAVER_DB_SCHEMA=${CLOUDBEAVER_DB_SCHEMA}
-      - CLOUDBEAVER_QM_DB_DRIVER=${CLOUDBEAVER_QM_DB_DRIVER}
-      - CLOUDBEAVER_QM_DB_URL=${CLOUDBEAVER_QM_DB_URL}
-      - CLOUDBEAVER_QM_DB_USER=${CLOUDBEAVER_QM_DB_USER}
-      - CLOUDBEAVER_QM_DB_PASSWORD=${CLOUDBEAVER_QM_DB_PASSWORD}
-      - CLOUDBEAVER_QM_DB_SCHEMA=${CLOUDBEAVER_QM_DB_SCHEMA}
     expose:
       - "8978"
     depends_on:
