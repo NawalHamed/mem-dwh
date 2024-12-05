@@ -28,8 +28,8 @@ services:
       #VIRTUAL_PORT: 5050
       PGADMIN_DEFAULT_EMAIL: nalmawali97@gmail.com
       PGADMIN_DEFAULT_PASSWORD: root
-      PGADMIN_LISTEN_PORT: 80
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      #PGADMIN_LISTEN_PORT: 80
+      #PGADMIN_CONFIG_SERVER_MODE: 'False'
     networks:
       - pgadmin-network
       - shared-network
