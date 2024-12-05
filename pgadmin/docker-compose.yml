@@ -13,8 +13,8 @@ services:
       - postgres-data:/var/lib/postgresql/data
     networks:
       - pgadmin-network
-    expose:
-      - 5432
+    #expose:
+      #- 5432
     ports:
       - "5437:5432"
 
@@ -30,8 +30,8 @@ services:
     networks:
       - pgadmin-network
       - shared-network
-    expose:
-      - 80
+    #expose:
+      #- 80
     ports:
       - "15432:80"
     depends_on:
