@@ -2,7 +2,7 @@ version: "3"
 services:
   cloudbeaver:
     image: dbeaver/cloudbeaver-ee:latest
-    container_name: cloudbeaver
+    container_name: dwh-cloudbeaver
     environment:
       - VIRTUAL_HOST: dwh-dbeaver.rihal.dev
       - VIRTUAL_PORT: 8978
@@ -13,6 +13,7 @@ services:
       - "8978:8978"
     networks:
       - shared-network
+      - cloudbeaver-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -29,7 +30,7 @@ services:
     ports:
       - "5436:5432"
     networks:
-      - shared-network
+      - cloudbeaver-network
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "cloudbeaver_user", "-d", "cloudbeaver"]
       interval: 30s
@@ -45,6 +46,7 @@ volumes:
 
     
 networks:
+  cloudbeaver-network:
   shared-network:
     external: true
 
