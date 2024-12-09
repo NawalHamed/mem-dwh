@@ -188,7 +188,7 @@ services:
       - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte.rihal.dev
       # - AIRBYTE_ROLE=${EMPTY_VARIABLE:-}
       #- VIRTUAL_HOST=airbyte.rihal.dev
-      - VIRTUAL_PORT=8000
+      #- VIRTUAL_PORT=8000
       - AIRBYTE_VERSION=${VERSION}
       - API_URL=${API_URL:-}
       - CONNECTOR_BUILDER_API_URL=${CONNECTOR_BUILDER_API_URL:-}
