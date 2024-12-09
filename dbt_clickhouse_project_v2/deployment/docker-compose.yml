@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  dbt-clickhouse:
+    build:
+      context: .
+      dockerfile: ./deployment/Dockerfile
+    container_name: dbt-clickhouse
+    environment:
+      DBT_PROFILES_DIR: /app/dbt/
+    volumes:
+      - ./dbt:/app/dbt   # Mount the local 'dbt' directory to the container
+    ports:
+      - "8080:8080"
+    networks:
+      - shared-network
+    restart: always
+
+networks:
+  shared-network:
+    external: true
