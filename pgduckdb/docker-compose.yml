@@ -9,14 +9,13 @@ services:
     volumes:
       - ./docker/postgresql.conf:/etc/postgresql/postgresql.conf
       - pgduckdb_data:/var/lib/postgresql/data
-    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     restart: always
     networks:
         - shared-network
 
 volumes:
   pgduckdb_data:
-
 
 networks:
     shared-network:
