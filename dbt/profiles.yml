@@ -1,0 +1,13 @@
+pg_duckdb_profile:
+  target: dev
+  outputs:
+    dev:
+      type: postgres  # Adjust to "postgres" for DuckDB Postgres compatibility
+      threads: 1
+      host: pgduckdb  # Service name from the pgduckdb compose
+      port: 5444
+      user: postgres
+      password: duckdb
+      dbname: postgres
+      schema: public
+      connect_timeout: 60
