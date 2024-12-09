@@ -7,8 +7,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: duckdb
     volumes:
-      - pgduckdb_data:/var/lib/postgresql/data
       - ./docker/postgresql.conf:/etc/postgresql/postgresql.conf
+      - pgduckdb_data:/var/lib/postgresql/data
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     restart: always
     networks:
