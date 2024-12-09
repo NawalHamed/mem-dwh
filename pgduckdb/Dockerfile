@@ -59,7 +59,7 @@ RUN make installcheck
 FROM base AS output
 
 # Automatically enable pg_duckdb
-# RUN echo "shared_preload_libraries = 'pg_duckdb'" >> /usr/share/postgresql/postgresql.conf.sample
+RUN echo "shared_preload_libraries = 'pg_duckdb'" >> /usr/share/postgresql/postgresql.conf.sample
 RUN echo "CREATE EXTENSION IF NOT EXISTS pg_duckdb;" >> /docker-entrypoint-initdb.d/0001-install-pg_duckdb.sql
 
 COPY --from=builder /out /
