@@ -141,33 +141,19 @@ services:
   # Temporal service
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
-    logging: *default-logging
     container_name: dwh2-airbyte-temporal
-    restart: unless-stopped
+    restart: always
     environment:
       - DB=postgresql
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_SEEDS=${DEPLOYMENT_NAME}-airbyte-db:5432
-      - TEMPORAL_GRPC_PORT=7233
-      - TEMPORAL_WEB_PORT=8088
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
-      
-    ports:
-      - "7233:7233"  # gRPC server
-      - "8088:8088"  # Temporal web interface
+      - POSTGRES_HOST=dwh2-airbyte-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=airbyte
     volumes:
-      - dynamicconfig:/etc/temporal/config/dynamicconfig
-    depends_on:
-      airbyte-db:
-        condition: service_started
+      - ./dynamicconfig.yaml:/etc/temporal/config/dynamicconfig.yaml
     networks:
-      airbyte-network:
-        aliases:
-          - dwh2-airbyte-temporal
-      shared-network:
-        aliases:
-          - dwh2-airbyte-temporal
+      - airbyte-network
 
 
 
