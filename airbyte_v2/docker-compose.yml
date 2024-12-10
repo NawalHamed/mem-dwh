@@ -98,7 +98,6 @@ services:
       - AIRBYTE_VERSION=${VERSION}
       - WEBAPP_URL=http://${DEPLOYMENT_NAME}-airbyte-webapp.rihal.dev
       - TEMPORAL_GRPC_PORT=7233
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
     volumes:
       - airbyte-workspace:${WORKSPACE_ROOT}
     depends_on:
