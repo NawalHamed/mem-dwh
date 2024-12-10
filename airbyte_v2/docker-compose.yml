@@ -1,17 +1,16 @@
 version: "3.8"
-
-# Global logging options
+#https://github.com/compose-spec/compose-spec/blob/master/spec.md#using-extensions-as-fragments
 x-logging:
   &default-logging
   options:
     max-size: "100m"
     max-file: "5"
   driver: json-file
-
 name: ${DEPLOYMENT_NAME}
-
 services:
-  # Initialization service
+  # hook in case we need to add init behavior
+  # every root service (no depends_on) should depend on init
+
   airbyte-init:
     image: airbyte/init:${VERSION}
     logging: *default-logging
@@ -22,11 +21,7 @@ services:
       - HACK_LOCAL_ROOT_PARENT=${HACK_LOCAL_ROOT_PARENT}
     volumes:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
-    networks:
-      - airbyte-network
-      - shared-network
 
-  # Bootloader service
   airbyte-bootloader:
     image: airbyte/bootloader:${VERSION}
     logging: *default-logging
@@ -42,25 +37,28 @@ services:
         condition: service_completed_successfully
     networks:
       - airbyte-network
-      - shared-network
+      #- shared-network
 
-  # PostgreSQL Database
   airbyte-db:
     image: airbyte/db:${VERSION}
     logging: *default-logging
     container_name: ${DEPLOYMENT_NAME}-airbyte-db
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=${DATABASE_USER}
+      - CONFIG_DATABASE_PASSWORD=${EMPTY_VARIABLE:-}
+      - CONFIG_DATABASE_URL=${EMPTY_VARIABLE:-}
+      - CONFIG_DATABASE_USER=${EMPTY_VARIABLE:-}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
+      - DATABASE_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=airbyte
+      - POSTGRES_USER=${DATABASE_USER}
     volumes:
       - airbyte-db:/var/lib/postgresql/data
     networks:
       - airbyte-network
-      - shared-network
+      #- shared-network
 
-  # Worker service
   airbyte-worker:
     image: airbyte/worker:${VERSION}
     logging: *default-logging
@@ -68,10 +66,63 @@ services:
     restart: unless-stopped
     environment:
       - AIRBYTE_VERSION=${VERSION}
+      - AUTO_DISABLE_FAILING_CONNECTIONS=${AUTO_DISABLE_FAILING_CONNECTIONS}
+      - CONFIG_DATABASE_PASSWORD=${EMPTY_VARIABLE:-}
+      - CONFIG_DATABASE_URL=${EMPTY_VARIABLE:-}
+      - CONFIG_DATABASE_USER=${EMPTY_VARIABLE:-}
+      - CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=${CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION:-}
+      - CONFIG_ROOT=${CONFIG_ROOT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DEPLOYMENT_MODE=${EMPTY_VARIABLE}
+      - INTERNAL_API_HOST=${DEPLOYMENT_NAME}-airbyte-server:8001
+      - JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=${JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION:-}
+      - JOB_MAIN_CONTAINER_CPU_LIMIT=${EMPTY_VARIABLE}
+      - JOB_MAIN_CONTAINER_CPU_REQUEST=${EMPTY_VARIABLE}
+      - JOB_MAIN_CONTAINER_MEMORY_LIMIT=${EMPTY_VARIABLE}
+      - JOB_MAIN_CONTAINER_MEMORY_REQUEST=${EMPTY_VARIABLE}
+      - LOCAL_DOCKER_MOUNT=${LOCAL_DOCKER_MOUNT}
+      - LOCAL_ROOT=${LOCAL_ROOT}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - LOG_CONNECTOR_MESSAGES=${EMPTY_VARIABLE}
+      - MAX_CHECK_WORKERS=${MAX_CHECK_WORKERS}
+      - MAX_DISCOVER_WORKERS=${MAX_DISCOVER_WORKERS}
+      - MAX_SPEC_WORKERS=${MAX_SPEC_WORKERS}
+      - MAX_SYNC_WORKERS=${MAX_SYNC_WORKERS}
+      - MAX_NOTIFY_WORKERS=${MAX_NOTIFY_WORKERS}
+      - SHOULD_RUN_NOTIFY_WORKFLOW=${EMPTY_VARIABLE}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_LIMIT=${EMPTY_VARIABLE}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_MEMORY_REQUEST=${EMPTY_VARIABLE}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_CPU_LIMIT=${EMPTY_VARIABLE}
+      - NORMALIZATION_JOB_MAIN_CONTAINER_CPU_REQUEST=${EMPTY_VARIABLE}
+      - SECRET_PERSISTENCE=${EMPTY_VARIABLE}
+      - SYNC_JOB_MAX_ATTEMPTS=${SYNC_JOB_MAX_ATTEMPTS}
+      - SYNC_JOB_MAX_TIMEOUT_DAYS=${SYNC_JOB_MAX_TIMEOUT_DAYS}
       - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+      - TRACKING_STRATEGY=${TRACKING_STRATEGY}
+      - WEBAPP_URL=http://localhost:8000/
+      - WORKSPACE_DOCKER_MOUNT=${WORKSPACE_DOCKER_MOUNT}
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT}
+      - METRIC_CLIENT=${EMPTY_VARIABLE}
+      - OTEL_COLLECTOR_ENDPOINT=${OTEL_COLLECTOR_ENDPOINT}
+      - JOB_ERROR_REPORTING_STRATEGY=${JOB_ERROR_REPORTING_STRATEGY}
+      - JOB_ERROR_REPORTING_SENTRY_DSN=${EMPTY_VARIABLE}
+      - ACTIVITY_MAX_ATTEMPT=${EMPTY_VARIABLE}
+      - ACTIVITY_INITIAL_DELAY_BETWEEN_ATTEMPTS_SECONDS=${EMPTY_VARIABLE}
+      - ACTIVITY_MAX_DELAY_BETWEEN_ATTEMPTS_SECONDS=${EMPTY_VARIABLE}
+      - WORKFLOW_FAILURE_RESTART_DELAY_SECONDS=${EMPTY_VARIABLE}
+      - AUTO_DETECT_SCHEMA=${AUTO_DETECT_SCHEMA}
+      - USE_STREAM_CAPABLE_STATE=${USE_STREAM_CAPABLE_STATE}
+      - MICRONAUT_ENVIRONMENTS=${WORKERS_MICRONAUT_ENVIRONMENTS}
+      - APPLY_FIELD_SELECTION=${APPLY_FIELD_SELECTION}
+      - FIELD_SELECTION_WORKSPACES=${FIELD_SELECTION_WORKSPACES}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - airbyte-workspace:${WORKSPACE_ROOT}
+      - ${LOCAL_ROOT}:${LOCAL_ROOT}
+    #ports:
+    #  - 9000
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -79,19 +130,46 @@ services:
       - airbyte-network
       - shared-network
 
-  # API Server
   server:
     image: airbyte/server:${VERSION}
     logging: *default-logging
     container_name: ${DEPLOYMENT_NAME}-airbyte-server
     restart: unless-stopped
     environment:
+      - AIRBYTE_ROLE=${EMPTY_VARIABLE:-}
+      - AIRBYTE_VERSION=${VERSION}
+      - CONFIG_DATABASE_PASSWORD=${EMPTY_VARIABLE:-}
+      - CONFIG_DATABASE_URL=${EMPTY_VARIABLE:-}
+      - CONFIG_DATABASE_USER=${EMPTY_VARIABLE:-}
+      - CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=${CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION:-}
+      - CONFIG_ROOT=${CONFIG_ROOT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - JOB_MAIN_CONTAINER_CPU_LIMIT=${EMPTY_VARIABLE}
+      - JOB_MAIN_CONTAINER_CPU_REQUEST=${EMPTY_VARIABLE}
+      - JOB_MAIN_CONTAINER_MEMORY_LIMIT=${EMPTY_VARIABLE}
+      - JOB_MAIN_CONTAINER_MEMORY_REQUEST=${EMPTY_VARIABLE}
+      - JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=${JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION:-}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - NEW_SCHEDULER=${EMPTY_VARIABLE}
+      - SECRET_PERSISTENCE=${EMPTY_VARIABLE}
       - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
-      - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-server.rihal.dev
-      - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
+      - TRACKING_STRATEGY=${TRACKING_STRATEGY}
+      - JOB_ERROR_REPORTING_STRATEGY=${JOB_ERROR_REPORTING_STRATEGY}
+      - JOB_ERROR_REPORTING_SENTRY_DSN=${EMPTY_VARIABLE}
+      - WEBAPP_URL=http://localhost:8000/
+      - WORKER_ENVIRONMENT=${EMPTY_VARIABLE}
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT}
+      - GITHUB_STORE_BRANCH=${EMPTY_VARIABLE}
+      - MICRONAUT_ENVIRONMENTS=${WORKERS_MICRONAUT_ENVIRONMENTS}
+      - AUTO_DETECT_SCHEMA=${AUTO_DETECT_SCHEMA}
+    #ports:
+    #  - 8001
+    volumes:
+      - airbyte-workspace:${WORKSPACE_ROOT}
+      - airbyte-data:${CONFIG_ROOT}
+      - ${LOCAL_ROOT}:${LOCAL_ROOT}
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -99,27 +177,33 @@ services:
       - airbyte-network
       - shared-network
 
-  # Web Application
   webapp:
     image: airbyte/webapp:${VERSION}
     logging: *default-logging
     container_name: ${DEPLOYMENT_NAME}-airbyte-webapp
     restart: unless-stopped
     ports:
-      - "8000:80"
+      - 8000:80
     environment:
-      - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-webapp.rihal.dev
-      - VIRTUAL_PORT=80
+      - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte.rihal.dev
+      # - AIRBYTE_ROLE=${EMPTY_VARIABLE:-}
+      #- VIRTUAL_HOST=airbyte.rihal.dev
+      #- VIRTUAL_PORT=8000
       - AIRBYTE_VERSION=${VERSION}
-      - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
+      - API_URL=${API_URL:-}
+      - CONNECTOR_BUILDER_API_URL=${CONNECTOR_BUILDER_API_URL:-}
+      - INTERNAL_API_HOST=${DEPLOYMENT_NAME}-airbyte-server:8001
+      - CONNECTOR_BUILDER_API_HOST=${DEPLOYMENT_NAME}-airbyte-connector-builder-server:80
+      - OPENREPLAY=${OPENREPLAY:-}
+      - PAPERCUPS_STORYTIME=${PAPERCUPS_STORYTIME:-}
+      - TRACKING_STRATEGY=${TRACKING_STRATEGY}
     depends_on:
-      server:
-        condition: service_started
+      airbyte-bootloader:
+        condition: service_completed_successfully
     networks:
       - airbyte-network
       - shared-network
 
-  # Temporal service
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
     logging: *default-logging
@@ -127,38 +211,77 @@ services:
     restart: unless-stopped
     environment:
       - DB=postgresql
+      - DB_PORT=${DATABASE_PORT}
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+      - LOG_LEVEL=${LOG_LEVEL}
+      - POSTGRES_PWD=${DATABASE_PASSWORD}
+      - POSTGRES_SEEDS=${DEPLOYMENT_NAME}-airbyte-db
       - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
     volumes:
+      # - ./temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
       - dynamicconfig:/etc/temporal/config/dynamicconfig
     networks:
       - airbyte-network
-      - shared-network
+      #- shared-network
 
-  # Cron jobs
   airbyte-cron:
     image: airbyte/cron:${VERSION}
     logging: *default-logging
     container_name: ${DEPLOYMENT_NAME}-airbyte-cron
     restart: unless-stopped
     environment:
+      - AIRBYTE_VERSION=${VERSION}
+      - CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=${CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DEPLOYMENT_MODE=${EMPTY_VARIABLE}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - REMOTE_CONNECTOR_CATALOG_URL=${EMPTY_VARIABLE}
+      - TEMPORAL_HISTORY_RETENTION_IN_DAYS=${EMPTY_VARIABLE}
+      - UPDATE_DEFINITIONS_CRON_ENABLED=${EMPTY_VARIABLE}
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT}
+      - MICRONAUT_ENVIRONMENTS=${CRON_MICRONAUT_ENVIRONMENTS}
+    volumes:
+      - airbyte-workspace:${WORKSPACE_ROOT}
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
     networks:
       - airbyte-network
-      - shared-network
+      #- shared-network
+
+  airbyte-connector-builder-server:
+    image: airbyte/connector-builder-server:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-connector-builder-server
+    restart: unless-stopped
+    #ports:
+    #  - 80
+    environment:
+      - AIRBYTE_VERSION=${VERSION}
+    depends_on:
+      airbyte-bootloader:
+        condition: service_completed_successfully
+    networks:
+      - airbyte-network
+      #- shared-network
 
 volumes:
-  airbyte-db:
-  airbyte-data:
   dynamicconfig:
+  airbyte-workspace:
+    name: ${WORKSPACE_DOCKER_MOUNT}
+  airbyte-data:
+    name: ${DATA_DOCKER_MOUNT}
+  airbyte-db:
+    name: ${DB_DOCKER_MOUNT}
 
+
+#networks:
+  #default:
+    #name: shared-network
+      #external: true
 networks:
   airbyte-network:
-    driver: bridge
   shared-network:
     external: true
