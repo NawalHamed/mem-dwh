@@ -148,9 +148,11 @@ services:
       - DB=postgresql
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_SEEDS=${DEPLOYMENT_NAME}-airbyte-db:5432
       - TEMPORAL_GRPC_PORT=7233
       - TEMPORAL_WEB_PORT=8088
       - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+      
     ports:
       - "7233:7233"  # gRPC server
       - "8088:8088"  # Temporal web interface
