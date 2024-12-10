@@ -102,6 +102,8 @@ services:
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
+      airbyte-temporal:
+        condition: service_started
     networks:
       - airbyte-network
       - shared-network
@@ -136,8 +138,16 @@ services:
       - DB=postgresql
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - TEMPORAL_GRPC_PORT=7233
+      - TEMPORAL_WEB_PORT=8088
+    ports:
+      - "7233:7233"  # gRPC server
+      - "8088:8088"  # Temporal web interface
     volumes:
       - dynamicconfig:/etc/temporal/config/dynamicconfig
+    depends_on:
+      airbyte-db:
+        condition: service_started
     networks:
       - airbyte-network
       - shared-network
