@@ -1,0 +1,160 @@
+version: "3.8"
+
+# Global logging options
+x-logging:
+  &default-logging
+  options:
+    max-size: "100m"
+    max-file: "5"
+  driver: json-file
+
+name: ${DEPLOYMENT_NAME}
+
+services:
+  # Initialization service
+  airbyte-init:
+    image: airbyte/init:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-init
+    command: /bin/sh -c "./scripts/create_mount_directories.sh /local_parent ${HACK_LOCAL_ROOT_PARENT} ${LOCAL_ROOT}"
+    environment:
+      - LOCAL_ROOT=${LOCAL_ROOT}
+      - HACK_LOCAL_ROOT_PARENT=${HACK_LOCAL_ROOT_PARENT}
+    volumes:
+      - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
+    networks:
+      - airbyte-network
+      - shared-network
+
+  # Bootloader service
+  airbyte-bootloader:
+    image: airbyte/bootloader:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-bootloader
+    environment:
+      - AIRBYTE_VERSION=${VERSION}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
+      - DATABASE_USER=${DATABASE_USER}
+      - LOG_LEVEL=${LOG_LEVEL}
+    depends_on:
+      airbyte-init:
+        condition: service_completed_successfully
+    networks:
+      - airbyte-network
+      - shared-network
+
+  # PostgreSQL Database
+  airbyte-db:
+    image: airbyte/db:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=airbyte
+    volumes:
+      - airbyte-db:/var/lib/postgresql/data
+    networks:
+      - airbyte-network
+      - shared-network
+
+  # Worker service
+  airbyte-worker:
+    image: airbyte/worker:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-worker
+    restart: unless-stopped
+    environment:
+      - AIRBYTE_VERSION=${VERSION}
+      - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+    depends_on:
+      airbyte-bootloader:
+        condition: service_completed_successfully
+    networks:
+      - airbyte-network
+      - shared-network
+
+  # API Server
+  server:
+    image: airbyte/server:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-server
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+    depends_on:
+      airbyte-bootloader:
+        condition: service_completed_successfully
+    networks:
+      - airbyte-network
+      - shared-network
+
+  # Web Application
+  webapp:
+    image: airbyte/webapp:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-webapp
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte.rihal.dev
+      - API_URL=http://airbyte-server:8000
+    depends_on:
+      server:
+        condition: service_started
+    networks:
+      - airbyte-network
+      - shared-network
+
+  # Temporal service
+  airbyte-temporal:
+    image: airbyte/temporal:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-temporal
+    restart: unless-stopped
+    environment:
+      - DB=postgresql
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - dynamicconfig:/etc/temporal/config/dynamicconfig
+    networks:
+      - airbyte-network
+      - shared-network
+
+  # Cron jobs
+  airbyte-cron:
+    image: airbyte/cron:${VERSION}
+    logging: *default-logging
+    container_name: ${DEPLOYMENT_NAME}-airbyte-cron
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+    depends_on:
+      airbyte-bootloader:
+        condition: service_completed_successfully
+    networks:
+      - airbyte-network
+      - shared-network
+
+volumes:
+  airbyte-db:
+  airbyte-data:
+  dynamicconfig:
+
+networks:
+  airbyte-network:
+    driver: bridge
+  shared-network:
+    external: true
