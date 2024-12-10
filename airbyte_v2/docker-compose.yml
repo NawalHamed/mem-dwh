@@ -98,7 +98,7 @@ services:
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+      - TEMPORAL_HOST=dwh2-airbyte-temporal:7233
       - WORKSPACE_ROOT=${WORKSPACE_ROOT}
       - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-server.rihal.dev
       - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
