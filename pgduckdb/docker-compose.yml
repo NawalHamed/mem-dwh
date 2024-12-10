@@ -1,22 +1,24 @@
+name: ${DEPLOYMENT_NAME}
 services:
   db:
     image: pgduckdb/pgduckdb:16-main
-    ports:
-      - 5444:5432
+    container_name: ${DEPLOYMENT_NAME}-db
+    # ports:
+    #   - 5444:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: duckdb
     volumes:
-      - ./docker/postgresql.conf:/etc/postgresql/postgresql.conf
-      - pgduckdb_data:/var/lib/postgresql/data
+      - config:/etc/postgresql
+      - data:/var/lib/postgresql/data
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     restart: always
-    networks:
-        - shared-network
-
+ 
 volumes:
-  pgduckdb_data:
-
+  data:
+  config:
+ 
 networks:
-    shared-network:
-        external: true
+  default:
+    name: shared-network
+    external: true
