@@ -106,8 +106,9 @@ services:
     ports:
       - "8000:80"
     environment:
-      - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte.rihal.dev
-      - API_URL=http://airbyte-server:8000
+      - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-webapp.rihal.dev
+      - VIRTUAL_PORT=80
+      - AIRBYTE_VERSION=${VERSION}
     depends_on:
       server:
         condition: service_started
