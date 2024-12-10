@@ -5,7 +5,7 @@ services:
     environment:
       DBT_PROFILES_DIR: /mem_dwh/profiles
     volumes:
-      - dbt_project:/mem_dwh  # Mount your local DBT project directory
+      - dbt:/mem_dwh  # Mount your local DBT project directory
     networks:
       - default
     command: >
@@ -20,7 +20,7 @@ services:
     restart: "no"
 
 volumes:
-  dbt_project:
+  dbt:
     #driver: local
 
 networks:
