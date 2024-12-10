@@ -95,6 +95,7 @@ services:
       - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
       - CONFIGS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=0
       - JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=0
+      - AIRBYTE_VERSION=${AIRBYTE_VERSION}
     volumes:
       - airbyte-workspace:${WORKSPACE_ROOT}
     depends_on:
