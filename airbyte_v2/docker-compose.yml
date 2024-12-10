@@ -1,15 +1,15 @@
 version: "3.8"
- 
+
 # Global logging options
 x-logging:
-&default-logging
+  &default-logging
   options:
     max-size: "100m"
     max-file: "5"
   driver: json-file
- 
+
 name: ${DEPLOYMENT_NAME}
- 
+
 services:
   # Initialization service
   airbyte-init:
@@ -25,7 +25,7 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
   # Bootloader service
   airbyte-bootloader:
     image: airbyte/bootloader:${VERSION}
@@ -43,7 +43,7 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
   # PostgreSQL Database
   airbyte-db:
     image: airbyte/db:${VERSION}
@@ -59,7 +59,7 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
   # Worker service
   airbyte-worker:
     image: airbyte/worker:${VERSION}
@@ -78,7 +78,7 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
   # API Server
   server:
     image: airbyte/server:${VERSION}
@@ -96,7 +96,7 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
   # Web Application
   webapp:
     image: airbyte/webapp:${VERSION}
@@ -114,7 +114,7 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
   # Temporal service
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
@@ -130,7 +130,7 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
   # Cron jobs
   airbyte-cron:
     image: airbyte/cron:${VERSION}
@@ -147,12 +147,12 @@ services:
     networks:
       - airbyte-network
       - shared-network
- 
+
 volumes:
   airbyte-db:
   airbyte-data:
   dynamicconfig:
- 
+
 networks:
   airbyte-network:
     driver: bridge
