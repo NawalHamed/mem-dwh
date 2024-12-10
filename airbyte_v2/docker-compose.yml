@@ -141,8 +141,8 @@ services:
       - TEMPORAL_GRPC_PORT=7233
       - TEMPORAL_WEB_PORT=8088
     ports:
-      - "7233:7233"  # gRPC server
-      - "8088:8088"  # Temporal web interface
+      - "7234:7233"  # gRPC server
+      - "8081:8088"  # Temporal web interface
     volumes:
       - dynamicconfig:/etc/temporal/config/dynamicconfig
     depends_on:
@@ -151,6 +151,10 @@ services:
     networks:
       - airbyte-network
       - shared-network
+
+
+
+
 
   # Cron jobs
   airbyte-cron:
