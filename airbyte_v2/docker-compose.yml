@@ -97,7 +97,6 @@ services:
       - JOBS_DATABASE_MINIMUM_FLYWAY_MIGRATION_VERSION=0
       - AIRBYTE_VERSION=${VERSION}
       - WEBAPP_URL=http://${DEPLOYMENT_NAME}-airbyte-webapp.rihal.dev
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
       - TEMPORAL_GRPC_PORT=7233
     volumes:
       - airbyte-workspace:${WORKSPACE_ROOT}
