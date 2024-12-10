@@ -37,6 +37,15 @@ services:
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
       - LOG_LEVEL=${LOG_LEVEL}
+      
+    command: >
+      bash -c "
+        until nc -zvw5 ${DEPLOYMENT_NAME}-airbyte-db 5432; do
+          echo 'Waiting for PostgreSQL to startup.'
+          sleep 2;
+        done
+        ./scripts/start_bootloader.sh
+      "
     depends_on:
       airbyte-init:
         condition: service_completed_successfully
