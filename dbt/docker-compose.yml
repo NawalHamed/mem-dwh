@@ -1,0 +1,29 @@
+services:
+  dbt:
+    image: python:3.11-slim  # Use a base Python image
+    container_name: dbt-container
+    environment:
+      DBT_PROFILES_DIR: /mem_dwh/profiles
+    volumes:
+      - dbt_project:/mem_dwh  # Mount your local DBT project directory
+    networks:
+      - default
+    command: >
+      sh -c "
+      pip install dbt-postgres &&
+      cd /dbt &&
+      dbt deps &&
+      dbt seed &&
+      dbt run &&
+      dbt test
+      "
+    restart: "no"
+
+volumes:
+  dbt_project:
+    #driver: local
+
+networks:
+  default:
+    name: shared-network
+    external: true
