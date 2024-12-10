@@ -90,8 +90,8 @@ services:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
-      - VIRTUAL_HOST=dwh2-airbyte-server.rihal.dev
-      - API_URL=http://airbyte-server:8000
+      - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-server.rihal.dev
+      - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -109,8 +109,9 @@ services:
       - "8000:80"
     environment:
       - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-webapp.rihal.dev
-      #- VIRTUAL_PORT=8000
+      - VIRTUAL_PORT=80
       - AIRBYTE_VERSION=${VERSION}
+      - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
     depends_on:
       server:
         condition: service_started
