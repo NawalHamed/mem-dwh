@@ -72,6 +72,9 @@ services:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT}
+    volumes:
+      - airbyte-workspace:${WORKSPACE_ROOT}
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -90,8 +93,11 @@ services:
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT}
       - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-server.rihal.dev
       - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
+    volumes:
+      - airbyte-workspace:${WORKSPACE_ROOT}
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -145,6 +151,9 @@ services:
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - WORKSPACE_ROOT=${WORKSPACE_ROOT}
+    volumes:
+      - airbyte-workspace:${WORKSPACE_ROOT}
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -154,7 +163,8 @@ services:
 
 volumes:
   airbyte-db:
-  airbyte-data:
+  airbyte-workspace:
+    name: airbyte-workspace
   dynamicconfig:
 
 networks:
