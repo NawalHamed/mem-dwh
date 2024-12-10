@@ -3,7 +3,7 @@ mem_dwh:
     dev:
       dbname: postgres
       host: 192.168.100.130
-      pass: duckdb
+      password: duckdb
       port: 5444
       schema: public
       threads: 1
