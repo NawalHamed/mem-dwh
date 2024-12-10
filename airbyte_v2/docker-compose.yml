@@ -140,9 +140,10 @@ services:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
       - TEMPORAL_GRPC_PORT=7233
       - TEMPORAL_WEB_PORT=8088
+      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
     ports:
-      - "7234:7233"  # gRPC server
-      - "8081:8088"  # Temporal web interface
+      - "7233:7233"  # gRPC server
+      - "8088:8088"  # Temporal web interface
     volumes:
       - dynamicconfig:/etc/temporal/config/dynamicconfig
     depends_on:
