@@ -162,8 +162,13 @@ services:
       airbyte-db:
         condition: service_started
     networks:
-      - airbyte-network
-      - shared-network
+      airbyte-network:
+        aliases:
+          - dwh2-airbyte-temporal
+      shared-network:
+        aliases:
+          - dwh2-airbyte-temporal
+
 
 
 
