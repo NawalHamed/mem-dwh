@@ -1,14 +1,13 @@
 version: "3.8"
-#https://github.com/compose-spec/compose-spec/blob/master/spec.md#using-extensions-as-fragments
 x-logging:
   &default-logging
   options:
     max-size: "100m"
     max-file: "5"
   driver: json-file
+
 name: ${DEPLOYMENT_NAME}
 services:
-  # Initialization service
   airbyte-init:
     image: airbyte/init:${VERSION}
     logging: *default-logging
@@ -20,7 +19,6 @@ services:
     volumes:
       - ${HACK_LOCAL_ROOT_PARENT}:/local_parent
 
-  # Bootloader service
   airbyte-bootloader:
     image: airbyte/bootloader:${VERSION}
     logging: *default-logging
@@ -37,7 +35,6 @@ services:
     networks:
       - airbyte-network
 
-  # PostgreSQL Database service
   airbyte-db:
     image: airbyte/db:${VERSION}
     logging: *default-logging
@@ -51,7 +48,6 @@ services:
     networks:
       - airbyte-network
 
-  # Worker service
   airbyte-worker:
     image: airbyte/worker:${VERSION}
     logging: *default-logging
@@ -62,7 +58,6 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
     volumes:
       - airbyte-workspace:${WORKSPACE_ROOT}
     depends_on:
@@ -71,7 +66,6 @@ services:
     networks:
       - airbyte-network
 
-  # Server service
   server:
     image: airbyte/server:${VERSION}
     logging: *default-logging
@@ -82,12 +76,11 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
       - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-server.rihal.dev
       - VIRTUAL_PORT=8001
     volumes:
       - airbyte-workspace:${WORKSPACE_ROOT}
-      - airbyte-data:${CONFIG_ROOT}
+      - airbyte-data:/data  # Updated to avoid empty paths
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -95,7 +88,6 @@ services:
       - airbyte-network
       - shared-network
 
-  # WebApp service
   webapp:
     image: airbyte/webapp:${VERSION}
     logging: *default-logging
@@ -105,7 +97,7 @@ services:
       - 8000:80
     environment:
       - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-webapp.rihal.dev
-      - VIRTUAL_PORT=8000
+      - VIRTUAL_PORT=80
       - AIRBYTE_VERSION=${VERSION}
     depends_on:
       airbyte-bootloader:
@@ -114,7 +106,6 @@ services:
       - airbyte-network
       - shared-network
 
-  # Temporal service
   airbyte-temporal:
     image: airbyte/temporal:${VERSION}
     logging: *default-logging
@@ -128,7 +119,6 @@ services:
     networks:
       - airbyte-network
 
-  # Cron service
   airbyte-cron:
     image: airbyte/cron:${VERSION}
     logging: *default-logging
@@ -150,11 +140,11 @@ services:
 volumes:
   dynamicconfig:
   airbyte-workspace:
-    name: ${WORKSPACE_DOCKER_MOUNT}
+    name: airbyte_workspace
   airbyte-data:
-    name: ${DATA_DOCKER_MOUNT}
+    name: airbyte_data
   airbyte-db:
-    name: ${DB_DOCKER_MOUNT}
+    name: airbyte_db
 
 networks:
   airbyte-network:
