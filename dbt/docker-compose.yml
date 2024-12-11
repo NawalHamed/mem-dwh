@@ -15,7 +15,7 @@ services:
       apt-get install -y git &&
       git init /dbt &&
       cd /dbt &&
-      git remote add origin https://github.com/<your_username>/<your_repo>.git &&
+      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
       git config core.sparseCheckout true &&
       echo '/dbt/*' > .git/info/sparse-checkout &&
       echo '!/dbt_clickhouse*' >> .git/info/sparse-checkout &&
