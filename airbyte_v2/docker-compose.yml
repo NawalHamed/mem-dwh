@@ -37,13 +37,12 @@ services:
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
       - LOG_LEVEL=${LOG_LEVEL}
-      
     command: >
       bash -c "
         until nc -zvw5 ${DEPLOYMENT_NAME}-airbyte-db 5432; do
-          echo 'Waiting for PostgreSQL to startup.'
+          echo 'Waiting for PostgreSQL to startup.';
           sleep 2;
-        done
+        done;
         ./scripts/start_bootloader.sh
       "
     depends_on:
@@ -80,7 +79,7 @@ services:
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+      - TEMPORAL_HOST=dwh2-airbyte-temporal:7233
     depends_on:
       airbyte-bootloader:
         condition: service_completed_successfully
@@ -98,7 +97,7 @@ services:
       - DATABASE_URL=jdbc:postgresql://${DEPLOYMENT_NAME}-airbyte-db:5432/airbyte
       - DATABASE_USER=${DATABASE_USER}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
+      - TEMPORAL_HOST=dwh2-airbyte-temporal:7233
       - WORKSPACE_ROOT=${WORKSPACE_ROOT}
       - VIRTUAL_HOST=${DEPLOYMENT_NAME}-airbyte-server.rihal.dev
       - API_URL=http://${DEPLOYMENT_NAME}-airbyte-server:8000
@@ -140,32 +139,24 @@ services:
 
   # Temporal service
   airbyte-temporal:
-    image: airbyte/temporal:${VERSION}
-    logging: *default-logging
-    container_name: ${DEPLOYMENT_NAME}-airbyte-temporal
-    restart: unless-stopped
+    image: temporalio/auto-setup:1.15.2
+    container_name: dwh2-airbyte-temporal
+    restart: always
     environment:
       - DB=postgresql
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - TEMPORAL_GRPC_PORT=7233
-      - TEMPORAL_WEB_PORT=8088
-      - TEMPORAL_HOST=${DEPLOYMENT_NAME}-airbyte-temporal:7233
-    ports:
-      - "7233:7233"  # gRPC server
-      - "8088:8088"  # Temporal web interface
+      - POSTGRES_HOST=${DEPLOYMENT_NAME}-airbyte-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=temporal
+      - DYNAMIC_CONFIG_FILE_PATH=/etc/temporal/config/dynamicconfig.yaml
     volumes:
-      - dynamicconfig:/etc/temporal/config/dynamicconfig
-    depends_on:
-      airbyte-db:
-        condition: service_started
+      - ./dynamicconfig.yaml:/etc/temporal/config/dynamicconfig.yaml
+    ports:
+      - "7233:7233"
     networks:
       - airbyte-network
       - shared-network
-
-
-
-
 
   # Cron jobs
   airbyte-cron:
