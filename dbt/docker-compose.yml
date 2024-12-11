@@ -2,7 +2,7 @@ version: "3.9"
 services:
   dbt:
     image: python:3.11-slim  # Use a Python base image
-    container_name: dbt-container
+    container_name: dbt
     environment:
       DBT_PROFILES_DIR: /dbt/mem_dwh  # Set profiles directory path
     volumes:
