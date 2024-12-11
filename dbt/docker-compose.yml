@@ -11,8 +11,14 @@ services:
       - default
     command: >
       sh -c "
-      apt-get update && apt-get install -y git &&
-      git clone https://github.com/<your_username>/<your_repo>.git /dbt &&
+      apt-get update &&
+      apt-get install -y git &&
+      git init /dbt &&
+      cd /dbt &&
+      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
+      git config core.sparseCheckout true &&
+      echo 'dbt/' > .git/info/sparse-checkout &&
+      git pull origin main &&
       cd /dbt/mem_dwh &&
       pip install dbt-postgres &&
       dbt deps &&
