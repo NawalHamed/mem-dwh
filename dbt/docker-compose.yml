@@ -6,19 +6,24 @@ services:
     environment:
       DBT_PROFILES_DIR: /dbt/mem_dwh  # Set profiles directory path
     volumes:
-      - ./:/dbt  # Mount the entire dbt folder to /dbt in the container
+      - dbt-data:/dbt  # Use a named volume for persistence
     networks:
       - default
     command: >
       sh -c "
-      pip install dbt-postgres &&
+      apt-get update && apt-get install -y git &&
+      git clone https://github.com/<your_username>/<your_repo>.git /dbt &&
       cd /dbt/mem_dwh &&
+      pip install dbt-postgres &&
       dbt deps &&
       dbt seed &&
       dbt run &&
       dbt test
       "
     restart: "no"
+
+volumes:
+  dbt-data:
 
 networks:
   default:
