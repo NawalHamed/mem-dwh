@@ -1,27 +1,24 @@
+version: "3.9"
 services:
   dbt:
-    image: python:3.11-slim  # Use a base Python image
+    image: python:3.11-slim  # Use a Python base image
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: /mem_dwh/profiles
+      DBT_PROFILES_DIR: /dbt/mem_dwh  # Set profiles directory path
     volumes:
-      - dbt:/mem_dwh  # Mount your local DBT project directory
+      - ./:/dbt  # Mount the entire dbt folder to /dbt in the container
     networks:
       - default
     command: >
       sh -c "
       pip install dbt-postgres &&
-      cd /dbt &&
+      cd /dbt/mem_dwh &&
       dbt deps &&
       dbt seed &&
       dbt run &&
       dbt test
       "
     restart: "no"
-
-volumes:
-  dbt:
-    #driver: local
 
 networks:
   default:
