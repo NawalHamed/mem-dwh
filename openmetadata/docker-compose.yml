@@ -511,8 +511,14 @@ services:
       DB_USER: ${AIRFLOW_DB_USER:-airflow_user}
       DB_PASSWORD: ${AIRFLOW_DB_PASSWORD:-airflow_pass}
       # extra connection-string properties for the database
-      DB_PROPERTIES: ${AIRFLOW_DB_PROPERTIES:-}
-      # To test the lineage backend
+      DB_PROPERTIES: ${AIRFLOW_DB_PROPERTIES:-?charset=utf8mb4}
+      # Default fallback if environment variables are not set
+      FALLBACK_DB_SCHEME: "mysql+pymysql"
+      FALLBACK_DB_HOST: "mysql"
+      FALLBACK_DB_PORT: "3306"
+      FALLBACK_DB_USER: "airflow_user"
+      FALLBACK_DB_PASSWORD: "airflow_pass"
+      FALLBACK_AIRFLOW_DB: "airflow_db"
       AIRFLOW__LINEAGE__BACKEND: airflow_provider_openmetadata.lineage.backend.OpenMetadataLineageBackend
       AIRFLOW__LINEAGE__AIRFLOW_SERVICE_NAME: local_airflow
       AIRFLOW__LINEAGE__OPENMETADATA_API_ENDPOINT: http://openmetadata-server:8585/api
@@ -534,6 +540,7 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
+
 
 
 networks:
