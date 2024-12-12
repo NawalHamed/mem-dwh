@@ -1,4 +1,4 @@
-version: "3.9"
+9version: "3.9"
 services:
   dbt:
     image: python:3.11-slim
@@ -9,7 +9,7 @@ services:
       - dbt-data:/dbt  # Use a named volume for persistence
 
     ports:
-      - 8080:8080
+      - 8090:8090
     networks:
       - default
     command: >
