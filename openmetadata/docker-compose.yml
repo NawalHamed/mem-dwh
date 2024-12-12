@@ -501,8 +501,6 @@ services:
       VIRTUAL_PORT: 8080
       AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: "${DB_SCHEME}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${AIRFLOW_DB}${DB_PROPERTIES}"
-      AIRFLOW__DATABASE__LOAD_DEFAULT_CONNECTIONS: "false"
       AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS: "/opt/airflow/dag_generated_configs"
       DB_HOST: ${AIRFLOW_DB_HOST:-mysql}
       DB_PORT: ${AIRFLOW_DB_PORT:-3306}
@@ -511,19 +509,18 @@ services:
       DB_USER: ${AIRFLOW_DB_USER:-airflow_user}
       DB_PASSWORD: ${AIRFLOW_DB_PASSWORD:-airflow_pass}
       # extra connection-string properties for the database
-      DB_PROPERTIES: ${AIRFLOW_DB_PROPERTIES:-?charset=utf8mb4}
-      # Default fallback if environment variables are not set
-      FALLBACK_DB_SCHEME: "mysql+pymysql"
-      FALLBACK_DB_HOST: "mysql"
-      FALLBACK_DB_PORT: "3306"
-      FALLBACK_DB_USER: "airflow_user"
-      FALLBACK_DB_PASSWORD: "airflow_pass"
-      FALLBACK_AIRFLOW_DB: "airflow_db"
+      # EXAMPLE 
+      # require SSL (only for Postgres)
+      # properties: "?sslmode=require"
+      DB_PROPERTIES: ${AIRFLOW_DB_PROPERTIES:-}
+      # To test the lineage backend
       AIRFLOW__LINEAGE__BACKEND: airflow_provider_openmetadata.lineage.backend.OpenMetadataLineageBackend
       AIRFLOW__LINEAGE__AIRFLOW_SERVICE_NAME: local_airflow
       AIRFLOW__LINEAGE__OPENMETADATA_API_ENDPOINT: http://openmetadata-server:8585/api
       AIRFLOW__LINEAGE__JWT_TOKEN: ...
     entrypoint: /bin/bash
+    #command: tail -f /dev/null
+    #command: /bin/bash -c "while true; do echo Hello; sleep 3600; done" 
     command:
       - "/opt/airflow/ingestion_dependency.sh"
     healthcheck:
@@ -531,6 +528,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+      
+    #expose:
+      #- 8080
     ports:
       - "8080:8080"
     networks:
@@ -540,7 +540,6 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
-
 
 
 networks:
