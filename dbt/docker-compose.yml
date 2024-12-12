@@ -4,27 +4,31 @@ services:
     image: python:3.11-slim
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: /dbt/mem_dwh  # Set profiles directory path
+      DBT_PROFILES_DIR: ./dbt/mem_dwh  # Set profiles directory path
     volumes:
       - dbt-data:/dbt  # Use a named volume for persistence
-
-    ports:
-      - 8090:8090
     networks:
       - default
     command: >
       sh -c "
       apt-get update &&
       apt-get install -y git &&
-      pip install dbt-postgres &&
-      if [ -d /dbt/mem_dwh ]; then
-        cd /dbt/mem_dwh &&
+      git init ./dbt &&
+      cd ./dbt &&
+      (git remote remove origin || true) &&
+      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
+      git config core.sparseCheckout true &&
+      echo 'mem_dwh/*' > .git/info/sparse-checkout &&
+      git pull origin main &&
+      if [ -d ./dbt/mem_dwh ]; then
+        cd ./dbt/mem_dwh &&
+        pip install dbt-postgres &&
         dbt deps &&
         dbt seed &&
         dbt run &&
         dbt test
       else
-        echo 'Directory /dbt/mem_dwh not found!' && exit 1
+        echo 'Directory ./dbt/mem_dwh not found!' && exit 1
       fi
       "
     restart: "no"
