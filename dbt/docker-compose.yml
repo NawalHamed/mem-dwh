@@ -7,6 +7,9 @@ services:
       DBT_PROFILES_DIR: /dbt/mem_dwh  # Set profiles directory path
     volumes:
       - dbt-data:/dbt  # Use a named volume for persistence
+
+    ports:
+      - 8080:8080
     networks:
       - default
     command: >
