@@ -20,18 +20,15 @@ services:
       (git remote remove origin || true) &&
       git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
       git config core.sparseCheckout true &&
-      echo 'mem_dwh/*' > .git/info/sparse-checkout &&
+      echo '/dbt/*' > .git/info/sparse-checkout &&
+      echo '!/dbt_clickhouse*' >> .git/info/sparse-checkout &&
       git pull origin main &&
-      if [ -d ./dbt/mem_dwh ]; then
-        cd /dbt/mem_dwh &&
-        pip install dbt-postgres &&
-        dbt deps &&
-        dbt seed &&
-        dbt run &&
-        dbt test
-      else
-        echo 'Directory /dbt/mem_dwh not found!' && exit 1
-      fi
+      cd ./dbt/mem_dwh &&
+      pip install dbt-postgres &&
+      dbt deps &&
+      dbt seed &&
+      dbt run &&
+      dbt test
       "
     restart: "no"
 
