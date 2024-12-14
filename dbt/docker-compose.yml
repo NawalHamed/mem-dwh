@@ -6,7 +6,7 @@ services:
     environment:
       DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
     volumes:
-      - dbt-data:/dbt  # Use a named volume for persistence
+      - ./local-dbt-project:/dbt  # Correctly mount the local DBT project directory
     ports:
       - 8090:8090
     networks:
@@ -16,26 +16,21 @@ services:
       set -e &&
       apt-get update &&
       apt-get install -y git &&
-      mkdir -p /dbt &&
-      cd /dbt &&
-      if git remote | grep -q origin; then
-        git remote remove origin;
-      fi &&
-      git init &&
-      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
-      git config core.sparseCheckout true &&
-      echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
-      git pull origin main &&
-      mv dbt/mem_dwh . &&
-      rm -rf dbt &&
       pip install dbt-core dbt-postgres &&
-      echo 'DBT container is ready and running.' &&
+      echo 'Running DBT commands...' &&
+      cd /dbt &&
+      dbt debug &&
+      dbt deps &&
+      dbt run &&
+      dbt test &&
+      echo 'DBT commands completed.' &&
       sleep infinity
       "
     restart: "always"  # Ensures the container restarts automatically if it stops
 
 volumes:
-  dbt-data:
+  local-dbt-project:
+    driver: local  # Ensures it uses a local directory for mounting
 
 networks:
   shared-network:
