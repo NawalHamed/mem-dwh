@@ -518,7 +518,7 @@ services:
       AIRFLOW__LINEAGE__AIRFLOW_SERVICE_NAME: local_airflow
       AIRFLOW__LINEAGE__OPENMETADATA_API_ENDPOINT: http://openmetadata-server:8585/api
       AIRFLOW__LINEAGE__JWT_TOKEN: ...
-    entrypoint: /bin/bash
+    #entrypoint: /bin/bash
     #command: tail -f /dev/null
     #command: /bin/bash -c "while true; do echo Hello; sleep 3600; done" 
     command:
