@@ -549,14 +549,23 @@ services:
       set -e &&
       groupadd docker || true &&
       usermod -aG docker airflow || true &&
-      if ! command -v pip3 >/dev/null 2>&1; then
+      if ! command -v pip >/dev/null 2>&1; then
+        echo 'pip not found. Installing...' &&
         apt-get update &&
-        apt-get install -y python3-pip
+        apt-get install -y python3 &&
+        python3 -m ensurepip --upgrade &&
+        python3 -m pip install --upgrade pip setuptools
+      else
+        echo 'pip already installed.'
       fi &&
-      pip install apache-airflow[celery,postgres]==2.6.3 &&
-      /opt/airflow/ingestion_dependency.sh || echo 'Ingestion dependency script failed.' &&
-      sleep infinity
-      "
+      echo 'Installing Apache Airflow...' &&
+      su - airflow -c 'python3 -m pip install apache-airflow[celery,postgres]==2.6.3 --user' ||
+      echo 'Failed to install Apache Airflow.' &&
+      echo 'Running ingestion dependency script...' &&
+      su - airflow -c '/opt/airflow/ingestion_dependency.sh' ||
+      echo 'Ingestion dependency script failed.' &&
+      echo 'Setup complete. Keeping the container running...' &&
+      sleep infinity"
 
 
 networks:
