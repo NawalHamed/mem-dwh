@@ -28,7 +28,7 @@ services:
       git pull origin main &&
       mv dbt/mem_dwh . &&
       rm -rf dbt &&
-      pip install dbt-core==1.6.0 dbt-postgres==1.6.0 &&
+      pip install --upgrade dbt-core dbt-postgres &&
       echo 'DBT container is ready and running.' &&
       sleep infinity
       "
