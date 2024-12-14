@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+  dbt:
+    image: python:3.11-slim  # Use a Python base image
+    container_name: dbt-container
+    environment:
+      DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
+    volumes:
+      - dbt-data:/dbt  # Use a named volume for persistence
+    ports:
+      - 8090:8090
+    networks:
+      - default
+    command: >
+      sh -c "
+      set -e &&
+      apt-get update &&
+      apt-get install -y git &&
+      mkdir -p /dbt &&
+      cd /dbt &&
+      git init &&
+      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
+      git config core.sparseCheckout true &&
+      echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
+      git pull origin main &&
+      mv dbt/mem_dwh . &&
+      rm -rf dbt &&
+      if [ -d /dbt/mem_dwh ]; then
+        cd /dbt/mem_dwh &&
+        pip install dbt-postgres &&
+        dbt deps &&
+        dbt run &&
+        dbt test
+      else
+        echo 'Directory /dbt/mem_dwh not found!' &&
+        ls -la /dbt &&
+        echo 'Keeping container running for debugging...' &&
+        sleep infinity
+      fi &&
+      sleep infinity
+      "
+    restart: "no"
+
+volumes:
+  dbt-data:
+
+networks:
+  default:
+    name: shared-network
+    external: true
