@@ -553,7 +553,7 @@ services:
         apt-get update &&
         apt-get install -y python3-pip
       fi &&
-      pip3 install apache-airflow[celery,postgres]==2.6.3 &&
+      pip install apache-airflow[celery,postgres]==2.6.3 &&
       /opt/airflow/ingestion_dependency.sh || echo 'Ingestion dependency script failed.' &&
       sleep infinity
       "
