@@ -4,7 +4,7 @@ services:
     image: python:3.11-slim  # Use a Python base image
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
+      DBT_PROFILES_DIR: ./dbt/mem_dwh  # Use absolute path for profiles.yml directory
     volumes:
       - dbt-data:/dbt  # Use a named volume for persistence
     ports:
@@ -27,7 +27,7 @@ services:
       git pull origin main &&
       mv dbt/mem_dwh . &&
       rm -rf dbt &&
-      if [ -d /dbt/mem_dwh ]; then
+      if [ -d ./dbt/mem_dwh ]; then
         cd /dbt/mem_dwh &&
         pip install dbt-postgres &&
         dbt deps &&
