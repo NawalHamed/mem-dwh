@@ -1,0 +1,29 @@
+[0m22:01:54.161681 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000028D50AF9890>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000028D50AF9910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000028D50AF9750>]}
+
+
+============================== 22:01:54.168043 | f4280312-cdd2-425b-baeb-3d91cbae297b ==============================
+[0m22:01:54.168043 [info ] [MainThread]: Running with dbt=1.9.0
+[0m22:01:54.168678 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'fail_fast': 'False', 'debug': 'False', 'log_path': 'logs', 'profiles_dir': 'C:\\Users\\NawalAlMawali\\.dbt', 'version_check': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'empty': 'None', 'log_format': 'default', 'static_parser': 'True', 'invocation_command': 'dbt init', 'introspect': 'True', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'send_anonymous_usage_stats': 'True'}
+[0m22:02:09.103488 [debug] [MainThread]: Starter project path: C:\Users\NawalAlMawali\OneDrive - Rihal\MEM-DWH Project\mem-dwh\dbt\Lib\site-packages\dbt\include\starter_project
+[0m22:02:09.168524 [info ] [MainThread]: 
+Your new dbt project "mem_dwh" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m22:02:09.169524 [info ] [MainThread]: Setting up your profile.
+[0m22:03:03.192039 [info ] [MainThread]: Profile mem_dwh written to C:\Users\NawalAlMawali\.dbt\profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m22:03:03.193040 [debug] [MainThread]: Command `dbt init` succeeded at 22:03:03.193040 after 69.12 seconds
+[0m22:03:03.194041 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000028D4A85A690>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000028D4A7DC150>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000028D4A852750>]}
+[0m22:03:03.194041 [debug] [MainThread]: Flushing usage events
+[0m22:03:11.821994 [debug] [MainThread]: An error was encountered while trying to flush usage events
