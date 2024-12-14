@@ -549,7 +549,12 @@ services:
       set -e &&
       groupadd docker || true &&
       usermod -aG docker airflow || true &&
-      /opt/airflow/ingestion_dependency.sh &&
+      if ! command -v pip3 >/dev/null 2>&1; then
+        apt-get update &&
+        apt-get install -y python3-pip
+      fi &&
+      pip3 install apache-airflow[celery,postgres]==2.6.3 &&
+      /opt/airflow/ingestion_dependency.sh || echo 'Ingestion dependency script failed.' &&
       sleep infinity
       "
 
