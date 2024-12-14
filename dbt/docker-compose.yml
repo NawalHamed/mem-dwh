@@ -1,16 +1,16 @@
 version: "3.9"
 services:
   dbt:
-    image: python:3.11-slim
+    image: python:3.11-slim  # Use a Python base image
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: /dbt/mem_dwh
+      DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
     volumes:
-      - dbt-data:/dbt
+      - dbt-data:/dbt  # Use a named volume for persistence
     ports:
-      - 8090:8090
+      - 8090:8090  # Port mapping for external access
     networks:
-      - shared-network
+      - shared-network  # Network for inter-container communication
     command: >
       sh -c "
       set -e &&
@@ -34,18 +34,18 @@ services:
         dbt run &&
         dbt test
       else
-        echo "'dbt/mem_dwh' directory not found. Check your repository structure." &&
+        echo \"'dbt/mem_dwh' directory not found. Check your repository structure.\" &&
         ls -la /dbt &&
         echo 'Keeping container running for debugging...' &&
         sleep infinity
       fi &&
       sleep infinity
       "
-    restart: "no"
+    restart: "no"  # Prevent automatic restarts on failure
 
 volumes:
-  dbt-data:
+  dbt-data:  # Named volume to persist data across container restarts
 
 networks:
   shared-network:
-    external: true
+    external: true  # External network to communicate with other containers
