@@ -543,6 +543,17 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
 
+    user: "0:0"  # Run as root to avoid permission issues
+    entrypoint: >
+      /bin/bash -c "
+      set -e &&
+      groupadd docker || true &&
+      usermod -aG docker airflow || true &&
+      /opt/airflow/ingestion_dependency.sh &&
+      sleep infinity
+      "
+
+
 networks:
   openmetadata-network:
   shared-network:
