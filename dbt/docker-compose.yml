@@ -19,6 +19,7 @@ services:
       mkdir -p /dbt &&
       cd /dbt &&
       git init &&
+      git remote remove origin || true &&  # Remove remote if it exists
       git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
       git config core.sparseCheckout true &&
       echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
