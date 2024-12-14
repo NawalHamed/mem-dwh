@@ -4,7 +4,7 @@ services:
     image: python:3.11-slim  # Use a Python base image
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
+      DBT_PROFILES_DIR: ./dbt/mem_dwh  # Use absolute path for profiles.yml directory
     volumes:
       - dbt-data:/dbt  # Use a named volume for persistence
     ports:
@@ -23,10 +23,10 @@ services:
         git remote add origin https://github.com/NawalHamed/mem-dwh.git;
       fi &&
       git config core.sparseCheckout true &&
-      echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
+      echo './dbt/mem_dwh/*' > .git/info/sparse-checkout &&
       git pull origin main &&
-      if [ -d dbt/mem_dwh ]; then
-        mv dbt/mem_dwh . &&
+      if [ -d ./dbt/mem_dwh ]; then
+        mv ./dbt/mem_dwh . &&
         rm -rf dbt &&
         cd /dbt/mem_dwh &&
         pip install dbt-postgres &&
