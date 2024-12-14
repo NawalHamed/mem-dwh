@@ -10,7 +10,7 @@ services:
     ports:
       - 8090:8090
     networks:
-      - default
+      - shared-network  # Ensures accessibility from other containers
     command: >
       sh -c "
       set -e &&
@@ -18,34 +18,25 @@ services:
       apt-get install -y git &&
       mkdir -p /dbt &&
       cd /dbt &&
+      if git remote | grep -q origin; then
+        git remote remove origin;
+      fi &&
       git init &&
-      git remote remove origin || true &&  # Remove remote if it exists
       git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
       git config core.sparseCheckout true &&
       echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
       git pull origin main &&
       mv dbt/mem_dwh . &&
       rm -rf dbt &&
-      if [ -d /dbt/mem_dwh ]; then
-        cd /dbt/mem_dwh &&
-        pip install dbt-postgres &&
-        dbt deps &&
-        dbt run &&
-        dbt test
-      else
-        echo 'Directory /dbt/mem_dwh not found!' &&
-        ls -la /dbt &&
-        echo 'Keeping container running for debugging...' &&
-        sleep infinity
-      fi &&
+      pip install dbt-core dbt-postgres &&
+      echo 'DBT container is ready and running.' &&
       sleep infinity
       "
-    restart: "no"
+    restart: "always"  # Ensures the container restarts automatically if it stops
 
 volumes:
   dbt-data:
 
 networks:
-  default:
-    name: shared-network
-    external: true
+  shared-network:
+    external: true  # Ensures the network can be shared with other containers
