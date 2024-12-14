@@ -1,16 +1,16 @@
 version: "3.9"
 services:
   dbt:
-    image: python:3.11-slim  # Use a Python base image
+    image: python:3.11-slim
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: ./dbt/mem_dwh  # Use absolute path for profiles.yml directory
+      DBT_PROFILES_DIR: /dbt/mem_dwh
     volumes:
-      - dbt-data:/dbt  # Use a named volume for persistence
+      - dbt-data:/dbt
     ports:
       - 8090:8090
     networks:
-      - shared-network  # Ensures accessibility from other containers
+      - shared-network
     command: >
       sh -c "
       set -e &&
@@ -25,27 +25,27 @@ services:
       git config core.sparseCheckout true &&
       echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
       git pull origin main &&
-      mv dbt/mem_dwh . &&
-      rm -rf dbt &&
-      if [ -d ./dbt/mem_dwh ]; then
+      if [ -d dbt/mem_dwh ]; then
+        mv dbt/mem_dwh . &&
+        rm -rf dbt &&
         cd /dbt/mem_dwh &&
         pip install dbt-postgres &&
         dbt deps &&
         dbt run &&
         dbt test
       else
-        echo 'Directory /dbt/mem_dwh not found!' &&
+        echo "'dbt/mem_dwh' directory not found. Check your repository structure." &&
         ls -la /dbt &&
         echo 'Keeping container running for debugging...' &&
         sleep infinity
       fi &&
       sleep infinity
       "
-    restart: "no"  # Ensures the container does not restart automatically
+    restart: "no"
 
 volumes:
   dbt-data:
 
 networks:
   shared-network:
-    external: true  # Ensures the network can be shared with other containers
+    external: true
