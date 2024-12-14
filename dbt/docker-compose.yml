@@ -4,35 +4,39 @@ services:
     image: python:3.11-slim  # Use a Python base image
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: /dbt/mem_dwh  # Set profiles directory path
+      DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
     volumes:
       - dbt-data:/dbt  # Use a named volume for persistence
+    ports:
+      - 8090:8090
     networks:
-      - default
+      - shared-network  # Ensures accessibility from other containers
     command: >
       sh -c "
+      set -e &&
       apt-get update &&
       apt-get install -y git &&
-      git init /dbt &&
+      mkdir -p /dbt &&
       cd /dbt &&
+      if git remote | grep -q origin; then
+        git remote remove origin;
+      fi &&
+      git init &&
       git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
       git config core.sparseCheckout true &&
-      echo '/dbt/*' > .git/info/sparse-checkout &&
-      echo '!/dbt_clickhouse*' >> .git/info/sparse-checkout &&
+      echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
       git pull origin main &&
-      cd /dbt/mem_dwh &&
-      pip install dbt-postgres &&
-      dbt deps &&
-      dbt seed &&
-      dbt run &&
-      dbt test
+      mv dbt/mem_dwh . &&
+      rm -rf dbt &&
+      pip install dbt-core==1.6.0 dbt-postgres==1.6.0 &&
+      echo 'DBT container is ready and running.' &&
+      sleep infinity
       "
-    restart: "no"
+    restart: "always"  # Ensures the container restarts automatically if it stops
 
 volumes:
   dbt-data:
 
 networks:
-  default:
-    name: shared-network
-    external: true
+  shared-network:
+    external: true  # Ensures the network can be shared with other containers
