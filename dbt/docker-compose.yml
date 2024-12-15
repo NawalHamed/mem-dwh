@@ -4,13 +4,13 @@ services:
     image: python:3.11-slim  # Use a Python base image
     container_name: dbt-container
     environment:
-      DBT_PROFILES_DIR: ./dbt/mem_dwh  # Use absolute path for profiles.yml directory
+      DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
     volumes:
       - dbt-data:/dbt  # Use a named volume for persistence
     ports:
-      - 8090:8090  # Port mapping for external access
+      - 8090:8090
     networks:
-      - shared-network  # Network for inter-container communication
+      - shared-network  # Ensures accessibility from other containers
     command: >
       sh -c "
       set -e &&
@@ -18,34 +18,25 @@ services:
       apt-get install -y git &&
       mkdir -p /dbt &&
       cd /dbt &&
+      if git remote | grep -q origin; then
+        git remote remove origin;
+      fi &&
       git init &&
-      if ! git remote | grep -q origin; then
-        git remote add origin https://github.com/NawalHamed/mem-dwh.git;
-      fi &&
+      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
       git config core.sparseCheckout true &&
-      echo './dbt/mem_dwh/*' > .git/info/sparse-checkout &&
+      echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
       git pull origin main &&
-      if [ -d ./dbt/mem_dwh ]; then
-        mv ./dbt/mem_dwh . &&
-        rm -rf dbt &&
-        cd /dbt/mem_dwh &&
-        pip install dbt-postgres &&
-        dbt deps &&
-        dbt run &&
-        dbt test
-      else
-        echo \"'dbt/mem_dwh' directory not found. Check your repository structure.\" &&
-        ls -la /dbt &&
-        echo 'Keeping container running for debugging...' &&
-        sleep infinity
-      fi &&
+      mv dbt/mem_dwh . &&
+      rm -rf dbt &&
+      pip install dbt-core dbt-postgres &&
+      echo 'DBT container is ready and running.' &&
       sleep infinity
       "
-    restart: "no"  # Prevent automatic restarts on failure
+    restart: "always"  # Ensures the container restarts automatically if it stops
 
 volumes:
-  dbt-data:  # Named volume to persist data across container restarts
+  dbt-data:
 
 networks:
   shared-network:
-    external: true  # External network to communicate with other containers
+    external: true  # Ensures the network can be shared with other containers
