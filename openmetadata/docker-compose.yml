@@ -15,7 +15,7 @@ volumes:
   ingestion-volume-dags:
   ingestion-volume-tmp:
   es-data:
-  dbt-data:
+  #dbt-data:
   
 services:
   mysql:
@@ -542,42 +542,9 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
-      - dbt-data:/dbt-data
+      #- dbt-data:/dbt-data
 
-  dbt:
-    image: python:3.11-slim  # Use a Python base image
-    container_name: dbt-container
-    environment:
-      DBT_PROFILES_DIR: /dbt/mem_dwh  # Use absolute path for profiles.yml directory
-    volumes:
-      - dbt-data:/dbt  # Use a named volume for persistence
-    ports:
-      - 8090:8090
-    networks:
-      - shared-network  # Ensures accessibility from other containers
-    command: >
-      sh -c "
-      set -e &&
-      apt-get update &&
-      apt-get install -y git &&
-      mkdir -p /dbt &&
-      cd /dbt &&
-      if git remote | grep -q origin; then
-        git remote remove origin;
-      fi &&
-      git init &&
-      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
-      git config core.sparseCheckout true &&
-      echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
-      git pull origin main &&
-      mv dbt/mem_dwh . &&
-      rm -rf dbt &&
-      pip install dbt-core dbt-postgres &&
-      echo 'DBT container is ready and running.' &&
-      sleep infinity
-      "
-    restart: "always"  # Ensures the container restarts automatically if it stops
-
+  
 
 
 networks:
