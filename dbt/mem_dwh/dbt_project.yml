@@ -18,9 +18,16 @@ seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
+
 clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
+
+# Dispatch configuration
+dispatch:
+  - macro_namespace: dbt
+    search_order: [mem_dwh, dbt]
+
 
 
 # Configuring models
@@ -30,7 +37,12 @@ clean-targets:         # directories to be removed by `dbt clean`
 # directory as views. These settings can be overridden in the individual model
 # files using the `{{ config(...) }}` macro.
 models:
+  +materialized: table
   mem_dwh:
     # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: view
+    bronze_layer:
+      +schema: bronze_layer  # Route models to the bronze layer schema
+    silver_layer:
+      +schema: silver_layer  # Route models to the silver schema
+    gold_layer:
+      +schema: gold_layer
