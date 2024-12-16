@@ -12,5 +12,5 @@ SELECT
     registration_number,
     contact_name,
     contact_email
-FROM {{ ref('cleaned_contractor') }}
+FROM {{ ref('datasource_qvd_contractor') }}
 WHERE contractor_status = 'active' -- No need to normalize again

@@ -14,5 +14,5 @@ SELECT
     contract_category_id, -- Matches transformed_contract_category
     contract_status,
     contract_type
-FROM {{ ref('cleaned_contract') }}
+FROM {{ ref('datasource_qvd_contract') }}
 WHERE contract_status = 'active' -- Optional filter for active contracts

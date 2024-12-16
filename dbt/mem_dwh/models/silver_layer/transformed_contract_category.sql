@@ -7,4 +7,4 @@ SELECT
     contract_category_id,
     category_name,
     category_type
-FROM {{ ref('cleaned_contract_category') }}
+FROM {{ ref('datasource_qvd_contract_category') }}
