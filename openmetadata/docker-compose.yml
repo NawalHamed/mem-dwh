@@ -1,21 +1,10 @@
-#  Copyright 2021 Collate
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#  http://www.apache.org/licenses/LICENSE-2.0
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
-version: "3.9"
 volumes:
   ingestion-volume-dag-airflow:
   ingestion-volume-dags:
   ingestion-volume-tmp:
   es-data:
   dbt-data:
+  dbt-profile:
   
 services:
   mysql:
@@ -280,6 +269,7 @@ services:
       DBT_PROFILES_DIR: /dbt/mem_dwh
     volumes:
       - dbt-data:/dbt
+      - dbt-profile:/dbt/mem_dwh
     networks:
       - shared-network
     command: >
@@ -574,8 +564,9 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
-      #- dbt-data:/dbt-data
-      - dbt-data:/opt/airflow/dags/dbt
+      # - dbt-data:/dbt-data
+      # - dbt-data:/opt/airflow/dags/dbt
+      - dbt-profile:/opt/airflow/dags/dbt/mem_dwh
 
   
 
