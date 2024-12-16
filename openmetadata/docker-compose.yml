@@ -3,8 +3,8 @@ volumes:
   ingestion-volume-dags:
   ingestion-volume-tmp:
   es-data:
-  dbt-data:
-  dbt-profile:
+  # dbt-data:
+  # dbt-profile:
   
 services:
   mysql:
@@ -268,8 +268,7 @@ services:
     environment:
       DBT_PROFILES_DIR: /dbt/mem_dwh
     volumes:
-      - dbt-data:/dbt
-      - dbt-profile:/dbt/mem_dwh
+      - /docker/volumes/dbt-data:/dbt
     networks:
       - shared-network
     command: >
@@ -566,7 +565,8 @@ services:
       - ingestion-volume-tmp:/tmp
       # - dbt-data:/dbt-data
       # - dbt-data:/opt/airflow/dags/dbt
-      - dbt-profile:/opt/airflow/dags/dbt/mem_dwh
+      # - dbt-profile:/opt/airflow/dags/dbt/mem_dwh
+      - /docker/volumes/dbt-data/mem_dwh:/opt/airflow/dags/dbt/mem_dwh
 
   
 
