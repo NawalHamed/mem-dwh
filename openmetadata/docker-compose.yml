@@ -561,11 +561,12 @@ services:
       - shared-network
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
-      - ingestion-volume-dags:/opt/airflow/dags
+      # - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
       # - dbt-data:/dbt-data
       # - dbt-data:/opt/airflow/dags/dbt
       # - dbt-profile:/opt/airflow/dags/dbt/mem_dwh
+      - /docker/volumes/ingestion-volume-dags:/opt/airflow/dags
       - /docker/volumes/dbt-data/mem_dwh:/opt/airflow/dags/dbt/mem_dwh
 
   
