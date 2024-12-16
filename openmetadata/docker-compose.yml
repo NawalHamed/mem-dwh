@@ -484,7 +484,7 @@ services:
         condition: service_started
       db:
         condition: service_healthy
-      openmetadata-server:
+      server:
         condition: service_started
     environment:
       VIRTUAL_HOST: dwh-airflow.rihal.dev
