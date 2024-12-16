@@ -486,6 +486,10 @@ services:
         condition: service_healthy
       openmetadata-server:
         condition: service_started
+        
+      dbt:
+        condition: service_started
+        
     environment:
       VIRTUAL_HOST: dwh-airflow.rihal.dev
       VIRTUAL_PORT: 8080
