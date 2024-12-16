@@ -6,17 +6,17 @@
 SELECT
     contractid AS contract_id, -- Primary key
     contractorid AS contractor_id, -- Foreign key to contractors
-    contractcategory AS contract_category_id, -- Foreign key to contract categories
-    LOWER(title) AS contract_title, -- Normalize title to lowercase
-    contractamount AS contract_value, -- Monetary value of the contract
-    LOWER(contractstatus) AS contract_status, -- Normalize status to lowercase
-    LOWER(contracttype) AS contract_type, -- Type of the contract
+    contractcategory AS contract_category_id, -- Foreign key to categories
+    COALESCE(LOWER(title), 'untitled') AS contract_title, -- Handle nulls
+    contractamount AS contract_value, -- Monetary value
+    COALESCE(LOWER(contractstatus), 'unknown') AS contract_status, -- Handle nulls
+    COALESCE(LOWER(contracttype), 'general') AS contract_type, -- Handle nulls
     contractnumber AS contract_number, -- Contract number
-    registrationdate AS registration_date, -- Registration date
-    contractstartdate AS start_date, -- Start date
-    contractenddate AS end_date, -- End date
-    isawarded AS awarded_flag, -- Whether the contract is awarded
-    isdeleted AS deleted_flag, -- Whether the contract is deleted
+    registrationdate AS registration_date, -- Registration
+    contractstartdate AS start_date, -- Start
+    contractenddate AS end_date, -- End
+    isawarded AS awarded_flag, -- Is awarded
+    isdeleted AS deleted_flag, -- Is deleted
     LOWER(qvd_operator_name) AS operator_name -- Metadata
 FROM iron_layer.qvd_vw_bi_contract
-WHERE isdeleted = FALSE -- Exclude deleted records
+WHERE isdeleted = FALSE -- Exclude deleted

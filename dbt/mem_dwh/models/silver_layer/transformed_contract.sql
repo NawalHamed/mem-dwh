@@ -10,9 +10,9 @@ SELECT
     start_date,
     end_date,
     awarded_flag,
-    contractor_id, -- Matches transformed_contractor
-    contract_category_id, -- Matches transformed_contract_category
+    contractor_id, -- Matches contractor dimension
+    contract_category_id, -- Matches category dimension
     contract_status,
     contract_type
 FROM {{ ref('datasource_qvd_contract') }}
-WHERE contract_status = 'active' -- Optional filter for active contracts
+WHERE contract_status = 'active'

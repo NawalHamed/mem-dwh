@@ -1,10 +1,21 @@
+#  Copyright 2021 Collate
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#  http://www.apache.org/licenses/LICENSE-2.0
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+version: "3.9"
 volumes:
   ingestion-volume-dag-airflow:
-  # ingestion-volume-dags:
+  ingestion-volume-dags:
   ingestion-volume-tmp:
   es-data:
-  # dbt-data:
-  # dbt-profile:
+  #dbt-data:
   
 services:
   mysql:
@@ -262,36 +273,6 @@ services:
     networks:
       - openmetadata-network
       #- shared-network
-  dbt:
-    container_name: dwh-dbt
-    image: python:3.11-slim
-    environment:
-      DBT_PROFILES_DIR: /dbt/mem_dwh
-    volumes:
-      - /docker/volumes/dbt-data:/dbt
-    networks:
-      - shared-network
-    command: >
-      sh -c "
-      set -e &&
-      apt-get update &&
-      apt-get install -y git &&
-      mkdir -p /dbt &&
-      cd /dbt &&
-      if git remote | grep -q origin; then
-        git remote remove origin;
-      fi &&
-      git init &&
-      git remote add origin https://github.com/NawalHamed/mem-dwh.git &&
-      git config core.sparseCheckout true &&
-      echo 'dbt/mem_dwh/*' > .git/info/sparse-checkout &&
-      git pull origin main &&
-      mv dbt/mem_dwh/* . &&
-      pip install dbt-core dbt-postgres &&
-      echo 'DBT container is ready and running.' &&
-      sleep infinity
-      "
-    restart: "always"
 
   openmetadata-server:
     container_name: dwh-openmetadata_server
@@ -517,8 +498,6 @@ services:
         condition: service_healthy
       openmetadata-server:
         condition: service_started
-      dbt:
-        condition: service_started
     environment:
       VIRTUAL_HOST: dwh-airflow.rihal.dev
       VIRTUAL_PORT: 8080
@@ -561,13 +540,9 @@ services:
       - shared-network
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
-      # - ingestion-volume-dags:/opt/airflow/dags
+      - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
-      # - dbt-data:/dbt-data
-      # - dbt-data:/opt/airflow/dags/dbt
-      # - dbt-profile:/opt/airflow/dags/dbt/mem_dwh
-      - /docker/volumes/ingestion-volume-dags:/opt/airflow/dags
-      - /docker/volumes/dbt-data/mem_dwh:/opt/airflow/dags/dbt/mem_dwh
+      #- dbt-data:/dbt-data
 
   
 

@@ -5,6 +5,6 @@
 
 SELECT
     contractcategoryid AS contract_category_id, -- Primary key
-    LOWER(contractcategoryname) AS category_name, -- Normalize names to lowercase
-    LOWER(contractcategory) AS category_type -- Normalize types to lowercase
+    LOWER(COALESCE(contractcategoryname, 'unknown')) AS category_name, -- Default to 'unknown' if null
+    LOWER(COALESCE(contractcategory, 'unspecified')) AS category_type -- Default to 'unspecified' if null
 FROM iron_layer.qvd_vw_bi_contractcategory

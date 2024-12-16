@@ -4,13 +4,13 @@
 ) }}
 
 SELECT
-    contractor_id, -- No change here, matches Bronze
+    contractor_id,
     contractor_name,
-    LOWER(contractor_classification) AS contractor_classification, -- Normalize classification
+    COALESCE(LOWER(contractor_classification), 'unknown') AS contractor_classification, -- Handle nulls
     email,
     phone,
     registration_number,
     contact_name,
     contact_email
 FROM {{ ref('datasource_qvd_contractor') }}
-WHERE contractor_status = 'active' -- No need to normalize again
+WHERE contractor_status = 'active'
