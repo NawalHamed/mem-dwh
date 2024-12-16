@@ -13,5 +13,5 @@ SELECT
     contactpersonname AS contact_name, -- Contact person name
     contactpersonemailid AS contact_email, -- Contact person email
     LOWER(status) AS contractor_status -- Normalize status to lowercase
-FROM staging_layer.qvd_qvd_vw_bi_contractor
+FROM iron_layer.qvd_vw_bi_contractor
 WHERE LOWER(status) = 'active' -- Include only active contractors

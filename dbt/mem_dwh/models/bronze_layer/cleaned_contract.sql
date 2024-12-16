@@ -18,5 +18,5 @@ SELECT
     isawarded AS awarded_flag, -- Whether the contract is awarded
     isdeleted AS deleted_flag, -- Whether the contract is deleted
     LOWER(qvd_operator_name) AS operator_name -- Metadata
-FROM staging_layer.qvd_qvd_vw_bi_contract
+FROM iron_layer.qvd_vw_bi_contract
 WHERE isdeleted = FALSE -- Exclude deleted records
