@@ -19,7 +19,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     restart: on-failure
-    container_name: pgadmin
+    container_name: dwh-pgadmin-server
     environment:
       - VIRTUAL_HOST=dwh-pgadmin.rihal.dev
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
