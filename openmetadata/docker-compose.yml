@@ -509,6 +509,8 @@ services:
     command:
       - "-c"
       - |
+        set -e
+        apt-get update && apt-get install -y git
         if [ ! -d "/opt/airflow/dags/dbt_project" ]; then
           git clone --depth 1 --single-branch --branch main https://github.com/NawalHamed/mem-dwh.git /tmp/mem-dwh;
           cp -r /tmp/mem-dwh/dbt/mem_dwh /opt/airflow/dags/dbt_project;
@@ -516,6 +518,7 @@ services:
         else
           git -C /opt/airflow/dags/dbt_project pull;
         fi
+        pip install dbt-core dbt-postgres
         /opt/airflow/ingestion_dependency.sh
     #expose:
       #- 8080
