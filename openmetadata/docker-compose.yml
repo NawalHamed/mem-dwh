@@ -509,12 +509,15 @@ services:
     command:
       - "-c"
       - |
-        if [ ! -d "/opt/airflow/dags/dbt_project" ]; then
+        if [ ! -d "/opt/airflow/dags/dbt_project/.git" ]; then
+      	  echo "Cloning the dbt repository..."
           git clone --depth 1 --single-branch --branch main https://github.com/NawalHamed/mem-dwh.git /tmp/mem-dwh;
-          cp -r /tmp/mem-dwh/dbt/mem_dwh /opt/airflow/dags/dbt_project;
+          mkdir -p /opt/airflow/dags/dbt_project;
+          cp -r /tmp/mem-dwh/dbt/mem_dwh/* /opt/airflow/dags/dbt_project;
           rm -rf /tmp/mem-dwh;
         else
-          git -C /opt/airflow/dags/dbt_project pull;
+          echo "Pulling updates from the dbt repository..."
+          git -C /opt/airflow/dags/dbt_project pull || echo "Pull failed, continuing with the current state.";
         fi
         /opt/airflow/ingestion_dependency.sh
     #expose:
