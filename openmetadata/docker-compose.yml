@@ -476,8 +476,10 @@ services:
       test: [ "CMD", "wget", "-q", "--spider",  "http://localhost:8586/healthcheck" ]
 
   ingestion:
-    container_name: dwh-openmetadata-ingestion
+    container_name: openmetadata_ingestion
     image: docker.getcollate.io/openmetadata/ingestion:1.6.1
+    build:
+      context: .
     depends_on:
       elasticsearch:
         condition: service_started
@@ -495,33 +497,19 @@ services:
       DB_USER: ${AIRFLOW_DB_USER:-airflow_user}
       DB_SCHEME: ${AIRFLOW_DB_SCHEME:-postgresql+psycopg2}
       DB_PASSWORD: ${AIRFLOW_DB_PASSWORD:-airflow_pass}
-      # extra connection-string properties for the database
-      # EXAMPLE 
-      # require SSL (only for Postgres)
-      # properties: "?sslmode=require"
-      DB_PROPERTIES: ${AIRFLOW_DB_PROPERTIES:-}
-      # To test the lineage backend
-      # AIRFLOW__LINEAGE__BACKEND: airflow_provider_openmetadata.lineage.backend.OpenMetadataLineageBackend
-      # AIRFLOW__LINEAGE__AIRFLOW_SERVICE_NAME: local_airflow
-      # AIRFLOW__LINEAGE__OPENMETADATA_API_ENDPOINT: http://openmetadata-server:8585/api
-      # AIRFLOW__LINEAGE__JWT_TOKEN: ...
     entrypoint: /bin/bash
     command:
       - "-c"
       - |
-        set -e
-        apt-get update && apt-get install -y git
         if [ ! -d "/opt/airflow/dags/dbt_project" ]; then
+          mkdir -p /tmp/mem-dwh;
           git clone --depth 1 --single-branch --branch main https://github.com/NawalHamed/mem-dwh.git /tmp/mem-dwh;
           cp -r /tmp/mem-dwh/dbt/mem_dwh /opt/airflow/dags/dbt_project;
           rm -rf /tmp/mem-dwh;
         else
           git -C /opt/airflow/dags/dbt_project pull;
         fi
-        pip install dbt-core dbt-postgres
         /opt/airflow/ingestion_dependency.sh
-    #expose:
-      #- 8080
     ports:
       - "8080:8080"
     networks:
@@ -532,6 +520,12 @@ services:
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
       - dbt-project-data:/opt/airflow/dags/dbt_project
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+
 
 networks:
   openmetadata-network:
