@@ -3,6 +3,8 @@ volumes:
   ingestion-volume-dags:
   ingestion-volume-tmp:
   es-data:
+  dbt-project-data:
+    driver: local
 
 services:
   postgresql:
@@ -16,7 +18,7 @@ services:
     #expose:
       #- 5432
     ports:
-      - "5450:5432"
+      - "5460:5432"
     volumes:
      - ./docker-volume/db-data-postgres:/var/lib/postgresql/data
     
@@ -454,9 +456,9 @@ services:
       #Cache
       WEB_CONF_CACHE_CONTROL: ${WEB_CONF_CACHE_CONTROL:-""}
       WEB_CONF_PRAGMA: ${WEB_CONF_PRAGMA:-""}
-    expose:
-      - 8585
-      - 8586
+    #expose:
+      #- 8585
+      #- 8586
     ports:
       - "8585:8585"
       - "8586:8586"
@@ -474,7 +476,7 @@ services:
       test: [ "CMD", "wget", "-q", "--spider",  "http://localhost:8586/healthcheck" ]
 
   ingestion:
-    container_name: openmetadata_ingestion
+    container_name: dwh-openmetadata-ingestion
     image: docker.getcollate.io/openmetadata/ingestion:1.6.1
     depends_on:
       elasticsearch:
@@ -505,7 +507,14 @@ services:
       # AIRFLOW__LINEAGE__JWT_TOKEN: ...
     entrypoint: /bin/bash
     command:
-      - "/opt/airflow/ingestion_dependency.sh"
+      - "-c"
+      - |
+        if [ ! -d "/opt/airflow/dags/dbt_project" ]; then
+          git clone https://github.com/NawalHamed/mem-dwh.git /opt/airflow/dags/dbt_project;
+        else
+          git -C /opt/airflow/dags/dbt_project pull;
+        fi
+        /opt/airflow/ingestion_dependency.sh
     #expose:
       #- 8080
     ports:
@@ -517,6 +526,7 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
+      - dbt-project-data:/opt/airflow/dags/dbt_project
 
 networks:
   openmetadata-network:

@@ -1,0 +1,12 @@
+# Start with the base ingestion image
+FROM docker.getcollate.io/openmetadata/ingestion:1.6.1
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y git
+
+# Set the working directory to the dbt project path
+WORKDIR /opt/airflow/dags/dbt_project
+
+# Install dbt and its PostgreSQL adapter
+RUN pip install apache-airflow-providers-airbyte==3.2.1 --no-deps && \
+    pip install dbt-core dbt-postgres --no-cache-dir
