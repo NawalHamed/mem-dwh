@@ -510,7 +510,9 @@ services:
       - "-c"
       - |
         if [ ! -d "/opt/airflow/dags/dbt_project" ]; then
-          git clone https://github.com/NawalHamed/mem-dwh.git /opt/airflow/dags/dbt_project;
+          git clone --depth 1 --single-branch --branch main https://github.com/NawalHamed/mem-dwh.git /tmp/mem-dwh;
+          cp -r /tmp/mem-dwh/dbt/mem_dwh /opt/airflow/dags/dbt_project;
+          rm -rf /tmp/mem-dwh;
         else
           git -C /opt/airflow/dags/dbt_project pull;
         fi
