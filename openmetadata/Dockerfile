@@ -17,9 +17,6 @@ RUN apt-get update && apt-get install -y \
 RUN groupadd -g 1000 airflow && \
     usermod -g airflow airflow
 
-# Create necessary directories and set permissions
-RUN mkdir -p /opt/airflow/dbt/mem_dwh/logs && \
-    chown -R airflow /opt/airflow/dbt/mem_dwh
 # Switch to airflow user
 USER airflow
 
@@ -34,3 +31,6 @@ RUN pip install --no-cache-dir -r /requirements.txt
 
 # Set Airflow working directory
 WORKDIR /opt/airflow
+
+# Copy local DAGs folder to Airflow's DAGs folder
+COPY ./dags /opt/airflow/dags
