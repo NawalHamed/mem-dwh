@@ -484,7 +484,7 @@ services:
 
   ingestion:
     container_name: openmetadata_ingestion
-    image: docker.getcollate.io/openmetadata/ingestion:1.6.1-custom
+    image: docker.getcollate.io/openmetadata/ingestion:1.6.1
     build:
       context: .
     #user: "airflow"
@@ -519,7 +519,7 @@ services:
       - shared-network
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
-      - ingestion-volume-dags:/opt/airflow/dags:rw
+      - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
       - ./mem_dwh:/opt/airflow/dbt/mem_dwh
       #- dbt-project-data:/opt/airflow/dags/dbt_project:rw
