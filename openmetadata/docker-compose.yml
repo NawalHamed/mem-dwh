@@ -521,7 +521,7 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
-      - ./mem_dwh:/opt/airflow/dbt/mem_dwh
+      - ./mem_dwh:/opt/airflow/dags/mem_dwh
       #- dbt-project-data:/opt/airflow/dags/dbt_project:rw
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
