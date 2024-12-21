@@ -510,7 +510,8 @@ services:
       RATELIMIT_STORAGE_URL: redis://redis:6379/0
       #AIRFLOW_UID: 50000
     entrypoint: /bin/bash
-    command:["-c", "/opt/airflow/ingestion_dependency.sh && /opt/airflow/docker/docker-bootstrap.sh"]
+    command:
+      - "/opt/airflow/ingestion_dependency.sh"
 
     ports:
       - "8080:8080"
