@@ -505,6 +505,7 @@ services:
       DB_SCHEME: ${AIRFLOW_DB_SCHEME:-postgresql+psycopg2}
       DB_PASSWORD: ${AIRFLOW_DB_PASSWORD:-airflow_pass}
       RATELIMIT_STORAGE_URL: redis://redis:6379/0
+      AIRFLOW_UID: 50000
     entrypoint: /bin/bash
     command:
       - "-c"
