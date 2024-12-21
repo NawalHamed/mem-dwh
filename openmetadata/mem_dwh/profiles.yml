@@ -1,0 +1,12 @@
+mem_dwh:
+  outputs:
+    dev:
+      dbname: postgres
+      host: 192.168.100.130
+      pass: duckdb
+      port: 5444
+      schema: bronze_layer
+      threads: 1
+      type: postgres
+      user: postgres
+  target: dev

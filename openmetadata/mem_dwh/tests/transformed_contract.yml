@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: transformed_contract
+    description: "Transformed contract data for reporting and analytics."
+    columns:
+      - name: contract_id
+        description: "Primary key for contracts."
+        tests:
+          - not_null
+          - unique
+      - name: contractor_id
+        description: "Foreign key to contractors."
+        tests:
+          - not_null
+      - name: contract_category_id
+        description: "Foreign key to contract categories."
+        tests:
+          - not_null

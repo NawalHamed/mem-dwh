@@ -1,0 +1,37 @@
+version: 2
+
+models:
+  - name: cleaned_contract
+    description: "Cleaned contracts data from raw bronze layer."
+    columns:
+      - name: contractid
+        description: "Primary key for the contract."
+        tests:
+          - unique
+          - not_null
+      - name: contractorid
+        description: "Foreign key linking to contractors."
+        tests:
+          - not_null
+
+  - name: cleaned_contract_category
+    description: "Cleaned contract categories data from raw bronze layer."
+    columns:
+      - name: id
+        description: "Primary key for contract categories."
+        tests:
+          - unique
+          - not_null
+
+  - name: cleaned_contractor
+    description: "Cleaned contractors data from raw bronze layer."
+    columns:
+      - name: id
+        description: "Primary key for contractors."
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Contractor name, normalized to lowercase."
+        tests:
+          - not_null

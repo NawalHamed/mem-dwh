@@ -1,18 +1,37 @@
-FROM docker.getcollate.io/openmetadata/ingestion:1.6.1
+# Use a specific Airflow base image
+FROM apache/airflow:2.10.2-python3.10
 
-# Switch to root to install dependencies
+# Switch to root user for installing system dependencies
 USER root
 
-# Create and adjust permissions for Airflow directories
-RUN mkdir -p /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
-    && chmod -R 775 /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins \
-    && chown -R airflow:airflow /opt/airflow/dags /opt/airflow/logs /opt/airflow/plugins
+# Install necessary system packages
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    python3-dev \
+    libpq-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Fix potential issues with home directory
-RUN mkdir -p /home/airflow && chown -R airflow:airflow /home/airflow
+# Ensure airflow user has proper permissions
+RUN groupadd -g 1000 airflow && \
+    usermod -g airflow airflow
 
-# Install git and any other dependencies
-RUN apt-get update && apt-get install -y git && apt-get clean
+# Create necessary directories and set permissions
+RUN mkdir -p /opt/airflow/dbt/ecommerce/logs && \
+    chown -R airflow:airflow /opt/airflow/mem_dwh
 
-# Switch back to airflow user
+# Switch to airflow user
 USER airflow
+
+# Upgrade pip and install Python dependencies
+RUN pip install --upgrade pip
+
+# Copy requirements file for installing Python dependencies
+COPY requirements.txt /requirements.txt
+
+# Install dependencies from requirements file
+RUN pip install --no-cache-dir -r /requirements.txt
+
+# Set Airflow working directory
+WORKDIR /opt/airflow

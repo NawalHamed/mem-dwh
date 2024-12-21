@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: transformed_contractor
+    description: "Transformed contractor data with only active contractors."
+    columns:
+      - name: contractor_id
+        tests:
+          - unique
+          - not_null
+      - name: contractor_name
+        description: "Name of the contractor."

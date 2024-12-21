@@ -1,15 +1,10 @@
 volumes:
   ingestion-volume-dag-airflow:
   ingestion-volume-dags:
-    driver: local
-    driver_opts:
-      type: "none"
-      device: "./dags" # Local directory for DAGs
-      o: "bind"
   ingestion-volume-tmp:
   es-data:
   dbt-project-data:
-    driver: local
+
 
 services:
   postgresql:
@@ -492,7 +487,7 @@ services:
     image: docker.getcollate.io/openmetadata/ingestion:1.6.1-custom
     build:
       context: .
-    user: "airflow"
+    #user: "airflow"
     depends_on:
       elasticsearch:
         condition: service_started
@@ -512,27 +507,10 @@ services:
       DB_SCHEME: ${AIRFLOW_DB_SCHEME:-postgresql+psycopg2}
       DB_PASSWORD: ${AIRFLOW_DB_PASSWORD:-airflow_pass}
       RATELIMIT_STORAGE_URL: redis://redis:6379/0
-      AIRFLOW_UID: 50000
+      #AIRFLOW_UID: 50000
     entrypoint: /bin/bash
     command:
-      - "-c"
-      - |
-        mkdir -p /opt/airflow/dags/dbt_project;
-        if [ -w "/opt/airflow/dags/dbt_project" ]; then
-          echo "Setting up dbt_project directory...";
-          chmod -R 775 /opt/airflow/dags/dbt_project || echo "Cannot change permissions, skipping...";
-        
-          if [ ! -d "/opt/airflow/dags/dbt_project/.git" ]; then
-            git clone --depth 1 --single-branch --branch main https://github.com/NawalHamed/mem-dwh.git /tmp/mem-dwh;
-            cp -r /tmp/mem-dwh/dbt/mem_dwh /opt/airflow/dags/dbt_project || echo "Copy failed, check permissions.";
-            rm -rf /tmp/mem-dwh;
-          else
-            git -C /opt/airflow/dags/dbt_project pull;
-          fi
-        else
-          echo "Directory not writable. Check permissions.";
-        fi
-        /opt/airflow/ingestion_dependency.sh
+      - "/opt/airflow/ingestion_dependency.sh"
 
     ports:
       - "8080:8080"
@@ -543,7 +521,8 @@ services:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags:rw
       - ingestion-volume-tmp:/tmp
-      - dbt-project-data:/opt/airflow/dags/dbt_project:rw
+      - ./mem_dwh:/opt/airflow/dbt/mem_dwh
+      #- dbt-project-data:/opt/airflow/dags/dbt_project:rw
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
       interval: 15s
