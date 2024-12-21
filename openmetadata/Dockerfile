@@ -18,9 +18,8 @@ RUN groupadd -g 1000 airflow && \
     usermod -g airflow airflow
 
 # Create necessary directories and set permissions
-RUN mkdir -p /opt/airflow/dags/logs && \
-    chown -R airflow:airflow /opt/airflow/dags/mem_dwh
-
+RUN mkdir -p /opt/airflow/dbt/mem_dwh/logs && \
+    chown -R airflow /opt/airflow/dbt/mem_dwh
 # Switch to airflow user
 USER airflow
 
