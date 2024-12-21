@@ -496,6 +496,7 @@ services:
       openmetadata-server:
         condition: service_started
     environment:
+      VIRTUAL_HOST: dwh-airflow.rihal.dev
       AIRFLOW__CORE__DAGS_FOLDER: "/opt/airflow/dags"
       AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
