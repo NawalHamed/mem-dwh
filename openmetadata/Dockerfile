@@ -33,4 +33,4 @@ RUN pip install --no-cache-dir -r /requirements.txt
 WORKDIR /opt/airflow
 
 # Copy local DAGs folder to Airflow's DAGs folder
-COPY ./dags /opt/airflow/dags
+COPY ./dags/mem_dwh /opt/airflow/dags/dbt/mem_dwh
