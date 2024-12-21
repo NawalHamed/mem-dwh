@@ -510,14 +510,14 @@ services:
       - "-c"
       - |
         if [ ! -d "/opt/airflow/dags/dbt_project/.git" ]; then
-  	  git clone --depth 1 --single-branch --branch main https://github.com/NawalHamed/mem-dwh.git /tmp/mem-dwh
+          git clone --depth 1 --single-branch --branch main https://github.com/NawalHamed/mem-dwh.git /tmp/mem-dwh
           mkdir -p /opt/airflow/dags/dbt_project
           cp -r /tmp/mem-dwh/dbt/mem_dwh /opt/airflow/dags/dbt_project
           rm -rf /tmp/mem-dwh
         else
           git -C /opt/airflow/dags/dbt_project pull
         fi
-	/opt/airflow/ingestion_dependency.sh
+        /opt/airflow/ingestion_dependency.sh
 
     ports:
       - "8080:8080"
