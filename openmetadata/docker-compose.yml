@@ -3,7 +3,7 @@ volumes:
   ingestion-volume-dags:
   ingestion-volume-tmp:
   es-data:
-  dbt-project-data:
+  #dbt-project-data:
 
 
 services:
@@ -497,7 +497,7 @@ services:
         condition: service_started
     environment:
       VIRTUAL_HOST: dwh-airflow.rihal.dev
-      AIRFLOW__CORE__DAGS_FOLDER: "/opt/airflow/dags"
+      #AIRFLOW__CORE__DAGS_FOLDER: "/opt/airflow/dags"
       AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS: "/opt/airflow/dag_generated_configs"
@@ -510,8 +510,7 @@ services:
       RATELIMIT_STORAGE_URL: redis://redis:6379/0
       #AIRFLOW_UID: 50000
     entrypoint: /bin/bash
-    command:
-      - "/opt/airflow/ingestion_dependency.sh"
+    command:["-c", "/opt/airflow/ingestion_dependency.sh && /opt/airflow/docker/docker-bootstrap.sh"]
 
     ports:
       - "8080:8080"
