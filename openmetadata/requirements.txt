@@ -1,5 +1,0 @@
-apache-airflow==2.10.2
-apache-airflow-providers-airbyte==3.2.1 --no-deps
-apache-airflow-providers-celery==3.8.5
-dbt-core==1.9.0
-dbt-postgres==1.9.0

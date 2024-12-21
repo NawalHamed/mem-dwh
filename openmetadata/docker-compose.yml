@@ -485,10 +485,6 @@ services:
   ingestion:
     container_name: openmetadata_ingestion
     image: docker.getcollate.io/openmetadata/ingestion:1.6.1
-    build:
-      context: .
-      dockerfile: Dockerfile
-    #user: "airflow"
     depends_on:
       elasticsearch:
         condition: service_started
@@ -509,7 +505,7 @@ services:
       DB_SCHEME: ${AIRFLOW_DB_SCHEME:-postgresql+psycopg2}
       DB_PASSWORD: ${AIRFLOW_DB_PASSWORD:-airflow_pass}
       RATELIMIT_STORAGE_URL: redis://redis:6379/0
-      #AIRFLOW_UID: 50000
+     
     entrypoint: /bin/bash
     command:
       - "/opt/airflow/ingestion_dependency.sh"
@@ -522,10 +518,9 @@ services:
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
-      #- ./dags:/opt/airflow/dags
-      #- ./dags/mem_dwh:/opt/airflow/dags/dbt/mem_dwh
+      - ./dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
-      #- ./mem_dwh:/opt/airflow/dbt/mem_dwh
+   
 
 
 
