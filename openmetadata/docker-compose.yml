@@ -487,6 +487,7 @@ services:
     image: docker.getcollate.io/openmetadata/ingestion:1.6.1
     build:
       context: .
+      dockerfile: Dockerfile
     #user: "airflow"
     depends_on:
       elasticsearch:

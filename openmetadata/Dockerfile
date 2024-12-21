@@ -1,10 +1,10 @@
-# Use a specific Airflow base image
-FROM apache/airflow:2.10.2-python3.10
+# Use the OpenMetadata ingestion image as the base
+FROM docker.getcollate.io/openmetadata/ingestion:1.6.1
 
-# Switch to root user for installing system dependencies
+# Switch to root user to install additional system packages
 USER root
 
-# Install necessary system packages
+# Install necessary system packages for your environment
 RUN apt-get update && apt-get install -y \
     git \
     build-essential \
@@ -13,11 +13,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Ensure airflow user has proper permissions
-RUN groupadd -g 1000 airflow && \
-    usermod -g airflow airflow
-
-# Switch to airflow user
+# Switch back to airflow user
 USER airflow
 
 # Upgrade pip and install Python dependencies
