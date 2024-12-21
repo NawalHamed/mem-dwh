@@ -521,6 +521,7 @@ services:
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
+      - ./dags:/opt/airflow/dags
       - ./dags/mem_dwh:/opt/airflow/dags/dbt/mem_dwh
       - ingestion-volume-tmp:/tmp
       #- ./mem_dwh:/opt/airflow/dbt/mem_dwh
