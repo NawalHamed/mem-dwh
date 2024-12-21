@@ -1,6 +1,11 @@
 volumes:
   ingestion-volume-dag-airflow:
   ingestion-volume-dags:
+    driver: local
+    driver_opts:
+      type: "none"
+      device: "./dags" # Local directory for DAGs
+      o: "bind"
   ingestion-volume-tmp:
   es-data:
   dbt-project-data:
@@ -484,9 +489,10 @@ services:
 
   ingestion:
     container_name: openmetadata_ingestion
-    image: docker.getcollate.io/openmetadata/ingestion:1.6.1
+    image: docker.getcollate.io/openmetadata/ingestion:1.6.1-custom
     build:
       context: .
+    user: "airflow"
     depends_on:
       elasticsearch:
         condition: service_started
@@ -495,6 +501,7 @@ services:
       openmetadata-server:
         condition: service_started
     environment:
+      AIRFLOW__CORE__DAGS_FOLDER: "/opt/airflow/dags"
       AIRFLOW__API__AUTH_BACKENDS: "airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session"
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__OPENMETADATA_AIRFLOW_APIS__DAG_GENERATED_CONFIGS: "/opt/airflow/dag_generated_configs"
@@ -534,7 +541,7 @@ services:
       - shared-network
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
-      - ingestion-volume-dags:/opt/airflow/dags
+      - ingestion-volume-dags:/opt/airflow/dags:rw
       - ingestion-volume-tmp:/tmp
       - dbt-project-data:/opt/airflow/dags/dbt_project:rw
     healthcheck:
