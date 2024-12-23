@@ -518,7 +518,7 @@ services:
     volumes:
       - ingestion-volume-dag-airflow:/opt/airflow/dag_generated_configs
       - ingestion-volume-dags:/opt/airflow/dags
-      - ./dags:/opt/airflow/dags
+      #- ./dags:/opt/airflow/dags
       - ingestion-volume-tmp:/tmp
    
 

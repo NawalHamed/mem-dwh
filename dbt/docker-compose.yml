@@ -1,4 +1,4 @@
-version: "3.9"
+
 services:
   dbt:
     image: python:3.11-slim  # Use a Python base image
